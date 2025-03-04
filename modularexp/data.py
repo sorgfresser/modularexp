@@ -53,6 +53,43 @@ def get_dataset(n: int, max_number: int = MAX_NUMBER) -> Dataset:
     """
     return Dataset.from_generator(partial(generate_varying_moduli, n, max_number))
 
+# The below is blatantly copied from https://github.com/f-charton/Int2Int
+def encode_integer(val, base=1000, digit_sep=" "):
+    if val == 0:
+        return '+ 0'
+    sgn = '+' if val >= 0 else '-'
+    val = abs(val)
+    r = []
+    while val > 0:
+        r.append(str(val % base))
+        val = val // base
+    r.append(sgn)
+    r.reverse()
+    return digit_sep.join(r)
+
+
+def encode_integer_array(x, base=1000):
+    return f'V{len(x)} ' + " ".join(encode_integer(int(z), base) for z in x)
+
+
+def encode_range(x):
+    return str(int(x))
+
+
+# end copied stuff
+
+def stringify_batch(batch):
+    batch_a,batch_b,batch_c,batch_y = batch["a"], batch["b"], batch["c"], batch["y"]
+    result_prompt = []
+    result_target = []
+    for a,b,c,y in zip(batch_a, batch_b, batch_c, batch_y, strict=True):
+        result_prompt.append(encode_integer_array([a,b,c]))
+        result_target.append(encode_integer(y))
+    batch["prompt"] = result_prompt
+    batch["target"] = result_target
+    return batch
 
 if __name__ == '__main__':
-    get_dataset(1000).save_to_disk('modularexp/data')
+    dataset = get_dataset(1000)
+    dataset = dataset.map(stringify_batch, batched=True)
+    dataset.save_to_disk('modularexp/data')
