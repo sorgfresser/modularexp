@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "modularexp"
+version = "0.1.0"
+description = ""
+authors = ["Simon Sorg <tss52@cam.ac.uk>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+datasets = "^3.3.2"
+
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.3.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
