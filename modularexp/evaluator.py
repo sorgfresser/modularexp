@@ -11,6 +11,7 @@ from concurrent.futures import ProcessPoolExecutor
 import os
 import torch
 import numpy as np
+import wandb
 
 from .utils import to_cuda
 
@@ -391,6 +392,7 @@ class Evaluator(object):
                     f"{e}: {n_valid[i].item()} / {n_total[i].item()} "
                     f"({100. * n_valid[i].item() / max(n_total[i].item(), 1):.2f}%)"
                 )
+        wandb.log(scores)
         if data_type == "test":
             logger.info(f"{data_type} predicted pairs")
             for i in range(102):

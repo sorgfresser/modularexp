@@ -13,6 +13,8 @@ import torch
 import os
 import pickle
 
+import wandb
+
 import modularexp
 from modularexp.slurm import init_signal_handler, init_distributed_mode
 from modularexp.utils import bool_flag, initialize_exp
@@ -183,6 +185,7 @@ def get_parser():
                         help="Master port (for multi-node SLURM jobs)")
     parser.add_argument("--windows", type=bool_flag, default=False,
                         help="Windows version (no multiprocessing for eval)")
+    parser.add_argument("--wandb", type=str, default="", help="Wandb API key. If specified, will log to wandb")
 
     return parser
 
@@ -283,6 +286,13 @@ if __name__ == '__main__':
 
     # check parameters
     check_model_params(params)
+    if params.wandb:
+        wandb.login(key=params.wandb)
+        wandb.init()
+        wandb.config = {"dropout": params.dropout, "encoder_layers": params.n_enc_layers, "decoder_layers": params.n_dec_layers, "batch_size": params.batch_size}
 
     # run experiment
     main(params)
+
+    if params.wandb:
+        wandb.finish(0)

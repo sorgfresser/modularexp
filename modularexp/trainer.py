@@ -15,7 +15,7 @@ import numpy as np
 import torch
 from torch import nn
 from torch.nn.utils import clip_grad_norm_
-
+import wandb
 from .optim import get_optimizer
 from .utils import to_cuda
 
@@ -238,6 +238,20 @@ class Trainer(object):
         if self.n_total_iter % 200 != 0:
             return
 
+        if self.params.wandb:
+            stats_dict = {}
+            diff = time.time() - self.last_time
+            stats_dict["equations/s"] = self.stats["processed_e"] * 1.0 / diff
+            stats_dict["words/s"] = self.stats["processed_w"] * 1.0 / diff
+            for stat in self.stats:
+                if not isinstance(self.stats[stat], list) or len(self.stats[stat]) <= 0:
+                    continue
+                stats_dict[stat] = np.mean(self.stats[stat])
+            for idx, group in enumerate(self.optimizer.param_groups):
+                stats_dict[f"learning_rate_{idx}"] =  group["lr"]
+            wandb.log(stats_dict)
+
+
         s_iter = "%7i - " % self.n_total_iter
         s_stat = " || ".join(
             [
@@ -311,7 +325,7 @@ class Trainer(object):
             else:
                 checkpoint_path = self.params.reload_checkpoint
                 assert os.path.isfile(checkpoint_path)
-        
+
         logger.warning(f"Reloading checkpoint from {checkpoint_path} ...")
         data = torch.load(checkpoint_path, map_location="cpu")
 
@@ -324,7 +338,7 @@ class Trainer(object):
         # instead, we only reload current iterations / learning rates
         logger.warning("Reloading checkpoint optimizer ...")
         self.optimizer.load_state_dict(data["optimizer"])
-        
+
         if self.params.fp16:
             logger.warning("Reloading gradient scaler ...")
             self.scaler.load_state_dict(data["scaler"])
@@ -454,7 +468,7 @@ class Trainer(object):
         Encoding / decoding step.
         """
         params = self.params
-        
+
         # batch
         (x1, len1), (x2, len2), _ = self.get_batch(task)
         # cuda
@@ -467,14 +481,14 @@ class Trainer(object):
         )  # do not predict anything given the last target word
         y = x2[1:].masked_select(pred_mask[:-1])
         assert len(y) == (len2 - 1).sum().item()
-  
+
         encoder = (
             self.modules["encoder"].module
             if params.multi_gpu
             else self.modules["encoder"]
         )
         encoder.train()
-        
+
         decoder = (
             self.modules["decoder"].module
             if params.multi_gpu
@@ -551,7 +565,7 @@ class Trainer(object):
 
         # optimize
         self.optimize(loss)
-        
+
         # number of processed sequences / words
         self.n_equations += params.batch_size
         self.stats["processed_e"] += len1.size(0)
