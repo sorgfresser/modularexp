@@ -1,5 +1,7 @@
 from random import randint
-from modularexp.data import MAX_NUMBER, fast_exp
+from modularexp.envs.generators import fast_exp
+
+MAX_NUMBER = 1_000_000
 
 def compute_mod_slow(a, b, c):
     result = 1
@@ -19,8 +21,8 @@ def test_zero():
 
 def test_large_scale_automatically():
     for _ in range(100):
-        a = randint(0, MAX_NUMBER / 10)
-        b = randint(0, MAX_NUMBER / 10)
-        c = randint( 0, MAX_NUMBER / 10)
+        a = randint(0, MAX_NUMBER // 10)
+        b = randint(0, MAX_NUMBER // 10)
+        c = randint( 0, MAX_NUMBER // 10)
 
         assert fast_exp(a, b, c) == compute_mod_slow(a, b, c)
