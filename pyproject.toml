@@ -8,12 +8,21 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 datasets = "^3.3.2"
+torch = { version = "2.6.0", source = "pytorch-cpu"}
+transformers = "^4.49.0"
+accelerate = "^1.4.0"
+wandb = "^0.19.8"
 
 [tool.poetry.group.test]
 optional = true
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.5"
+
+[[tool.poetry.source]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
 
 [build-system]
 requires = ["poetry-core"]

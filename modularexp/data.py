@@ -51,7 +51,9 @@ def get_dataset(n: int, max_number: int = MAX_NUMBER) -> Dataset:
     :param max_number: The maximum number for the parameters random a,b,c
     :return: a Dataset object containing the generated data
     """
-    return Dataset.from_generator(partial(generate_varying_moduli, n, max_number))
+    dataset = Dataset.from_generator(partial(generate_varying_moduli, n, max_number))
+    dataset = dataset.map(stringify_batch, batched=True)
+    return dataset
 
 # The below is blatantly copied from https://github.com/f-charton/Int2Int
 def encode_integer(val, base=1000, digit_sep=" "):
@@ -91,5 +93,5 @@ def stringify_batch(batch):
 
 if __name__ == '__main__':
     dataset = get_dataset(1000)
-    dataset = dataset.map(stringify_batch, batched=True)
     dataset.save_to_disk('modularexp/data')
+    print(dataset[0])
