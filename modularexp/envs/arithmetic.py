@@ -44,7 +44,7 @@ class ArithmeticEnvironment(object):
         self.max_uniform = params.max_uniform
 
         dims = []
-        max_dim =  2
+        max_dim =  3
         tensor_dim =  1
         self.output_encoder = encoders.PositionalInts(params.base)
 

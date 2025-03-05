@@ -86,19 +86,20 @@ class Sequence(Generator):
             c = rng.choice(range(out, self.max_inverse + 1))
             inp = self.integer_sequence(2, rng, type)
             while fast_exp(inp[0], inp[1], c) != out:
-                inp = self.integer_sequence(2, rng, type)
+                inp = self.integer_sequence(2, rng, type, max=c)
             inp = (inp[0], inp[1], c)
         elif (type == "train" and (self.train_uniform_exp or mix < self.mixture)) or type == "test":
-            out = rng.randint(1, self.max_uniform + 1)
+            out = rng.randint(0, self.max_uniform)
             c = rng.choice(range(out, self.max_inverse + 1))
             inp = self.integer_sequence(2, rng, type)
             while fast_exp(inp[0], inp[1], c) != out:
-                inp = self.integer_sequence(2, rng, type)
+                inp = self.integer_sequence(2, rng, type, max=c)
             inp = (inp[0], inp[1], c)
         else:
             c = rng.choice(range(1, self.max_inverse + 1))
             inp = self.integer_sequence(2, rng, type)
             out = fast_exp(inp[0], inp[1], c)
+            inp = (inp[0], inp[1], c)
         return inp, out
 
     def evaluate(self, src, tgt, hyp):
