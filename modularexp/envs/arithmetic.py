@@ -172,7 +172,11 @@ class ArithmeticEnvironment(object):
             dataset,
             timeout=0,
             batch_size=batch_size,
-            num_workers=1,
+            num_workers=(
+                params.num_workers
+                if data_path is None or params.num_workers == 0
+                else 1
+            ),
             shuffle=False,
             collate_fn=dataset.collate_fn,
         )
