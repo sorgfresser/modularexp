@@ -313,6 +313,8 @@ class Trainer(object):
                 data["scaler"] = self.scaler.state_dict()
 
         torch.save(data, path)
+        if self.params.wandb:
+            wandb.log_model(path)
 
     def reload_checkpoint(self):
         """
