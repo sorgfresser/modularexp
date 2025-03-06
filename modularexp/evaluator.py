@@ -642,7 +642,7 @@ class Evaluator(object):
                             curr_d1 = 1
                         if is_valid3 > 0:
                             curr_d2 = 1
-                        if is_valid4 > 0:
+                        if is_valid4 >= 0:
                             curr_d3 = 1
 
                     # update beam log
