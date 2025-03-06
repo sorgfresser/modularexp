@@ -48,11 +48,11 @@ def check_hypothesis(eq):
         m = 0
         s1 = 0
         s2 = 0
-        nb = 0
+        nb = -1
     eq["is_valid"] = m
     eq["is_valid2"] = s1
     eq["is_valid3"] = s2
-    eq["is_valid4"] = nb if not nb is None else 0
+    eq["is_valid4"] = nb if not nb is None else -1
     return eq
 
 
@@ -332,7 +332,7 @@ class Evaluator(object):
                         n_valid_d1 += 1
                     if is_valid3 > 0:
                         n_valid_d2 += 1
-                    if is_valid4 > 0:
+                    if is_valid4 >= 0:
                         n_valid_d3 += 1
 
                 # update beam log
