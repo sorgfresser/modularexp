@@ -500,7 +500,7 @@ class TransformerModel(nn.Module):
             torch.arange(max_len, out=positions).unsqueeze(1).expand_as(generated)
         )
 
-        unfinished_sents = src_len.clone().fill_(1)
+        unfinished_sents = torch.ones_like(src_len, dtype=torch.bool)
 
         # cache compute states
         self.cache = {"slen": 0}
@@ -533,10 +533,11 @@ class TransformerModel(nn.Module):
 
             # update generations / lengths / finished sentences / current length
             generated[cur_len] = next_words * unfinished_sents + self.pad_index * (
-                1 - unfinished_sents
+                1 - unfinished_sents.long()
             )
+            assert (~unfinished_sents & self.pad_index == self.pad_index * (                 1 - unfinished_sents.long()             )).all()
             gen_len.add_(unfinished_sents)
-            unfinished_sents.mul_(next_words.ne(self.eos_index).long())
+            unfinished_sents &= next_words.ne(self.eos_index)
 
             cur_len = cur_len + 1
 
@@ -546,7 +547,7 @@ class TransformerModel(nn.Module):
 
         # add <EOS> to unfinished sentences
         if cur_len == max_len:
-            generated[-1].masked_fill_(unfinished_sents.byte(), self.eos_index)
+            generated[-1].masked_fill_(unfinished_sents, self.eos_index)
 
         # sanity check
         assert (generated == self.eos_index).sum() == 2 * bs
