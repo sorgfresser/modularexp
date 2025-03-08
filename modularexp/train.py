@@ -289,12 +289,15 @@ if __name__ == '__main__':
     check_model_params(params)
     if params.wandb:
         wandb.login(key=params.wandb)
+        config = {"dropout": params.dropout, "encoder_layers": params.n_enc_layers,
+                  "decoder_layers": params.n_dec_layers, "batch_size": params.batch_size,
+                  "encoder_dim": params.enc_emb_dim, "decoder_dim": params.dec_emb_dim,
+                  "seed": params.env_base_seed, "eval_size": params.eval_size, "epoch_size": params.epoch_size,
+                  "max_epoch": params.max_epoch, "eval_batch_size": params.batch_size_eval}
         if params.wandb_run:
-            wandb.init(id=params.wandb_run, resume="allow")
+            wandb.init(id=params.wandb_run, resume="allow", config=config)
         else:
-            wandb.init()
-        wandb.config = {"dropout": params.dropout, "encoder_layers": params.n_enc_layers,
-                        "decoder_layers": params.n_dec_layers, "batch_size": params.batch_size}
+            wandb.init(config=config)
 
     # run experiment
     main(params)
