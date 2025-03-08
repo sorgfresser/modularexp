@@ -193,16 +193,16 @@ class ArithmeticEnvironment(object):
             "--benford", type=bool_flag, default=False, help="Logarithmic distribution of integers"
         )
         parser.add_argument(
-            "--train_uniform_exp", type=bool_flag, default=False, help="Uniformly distributed mod exp in train set, 1 to max uniform"
+            "--train_uniform_exp", type=bool_flag, default=False, help="Uniformly distributed mod exp in train set, 0 to max uniform"
         )
         parser.add_argument(
-            "--train_inverse_dist", type=bool_flag, default=False, help="mod exp distributed as 1/K (instead of inverse squares) in train set, 1 to max_uniform"
+            "--train_inverse_dist", type=bool_flag, default=False, help="mod exp distributed as 1/K (instead of inverse squares) in train set, 0 to max_uniform"
         )
         parser.add_argument(
-            "--train_sqrt_dist", type=bool_flag, default=False, help="mod exp distributed as 1/sqrt(K) (instead of inverse squares) in train set, 1 to max_uniform"
+            "--train_sqrt_dist", type=bool_flag, default=False, help="mod exp distributed as 1/sqrt(K) (instead of inverse squares) in train set, 0 to max_uniform"
         )
         parser.add_argument(
-            "--train_32_dist", type=bool_flag, default=False, help="mod exp distributed as 1/K^3/2 (instead of inverse squares) in train set, 1 to max_uniform"
+            "--train_32_dist", type=bool_flag, default=False, help="mod exp distributed as 1/K^3/2 (instead of inverse squares) in train set, 0 to max_uniform"
         )
         parser.add_argument(
             "--max_inverse", type=int, default=100, help="Maximum value of inverse distributed mod exp"
