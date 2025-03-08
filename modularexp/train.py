@@ -186,7 +186,8 @@ def get_parser():
     parser.add_argument("--windows", type=bool_flag, default=False,
                         help="Windows version (no multiprocessing for eval)")
     parser.add_argument("--wandb", type=str, default="", help="Wandb API key. If specified, will log to wandb")
-
+    parser.add_argument("--wandb_run", type=str, default="",
+                        help="Run ID for Wandb. Will resume the run if already ongoing.")
     return parser
 
 
@@ -288,8 +289,12 @@ if __name__ == '__main__':
     check_model_params(params)
     if params.wandb:
         wandb.login(key=params.wandb)
-        wandb.init()
-        wandb.config = {"dropout": params.dropout, "encoder_layers": params.n_enc_layers, "decoder_layers": params.n_dec_layers, "batch_size": params.batch_size}
+        if params.wandb_run:
+            wandb.init(id=params.wandb_run, resume="allow")
+        else:
+            wandb.init()
+        wandb.config = {"dropout": params.dropout, "encoder_layers": params.n_enc_layers,
+                        "decoder_layers": params.n_dec_layers, "batch_size": params.batch_size}
 
     # run experiment
     main(params)
