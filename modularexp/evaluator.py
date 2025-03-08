@@ -378,7 +378,7 @@ class Evaluator(object):
         scores[f"{data_type}_{task}_acc_d3"] = (
             100.0 * (n_perfect_match + n_valid_d3) / _n_total
         )
-        wandb.log(scores)
+
         # per class perplexity and prediction accuracy
         for i in range(len(n_total)):
             if n_total[i].item() == 0:
@@ -392,7 +392,7 @@ class Evaluator(object):
                     f"{e}: {n_valid[i].item()} / {n_total[i].item()} "
                     f"({100. * n_valid[i].item() / max(n_total[i].item(), 1):.2f}%)"
                 )
-
+        wandb.log(scores)
         if data_type == "test":
             logger.info(f"{data_type} predicted pairs")
             for i in range(102):
