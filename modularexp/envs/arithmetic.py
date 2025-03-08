@@ -212,7 +212,7 @@ class ArithmeticEnvironment(object):
             "--max_uniform", type=int, default=100, help="Maximum value of uniformly distributed mod exp"
         )
         parser.add_argument(
-            "--test_uniform_exp", type=bool_flag, default=True, help="Uniformly distributed mod exp in test set, 1 to max uniform"
+            "--test_uniform_exp", type=bool_flag, default=True, help="Uniformly distributed mod exp in test set, 0 to max uniform"
         )
 
         parser.add_argument(
