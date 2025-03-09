@@ -87,7 +87,7 @@ class ArithmeticEnvironment(object):
         y = self.output_encoder.encode(y_data)
         if self.max_len > 0 and (len(x) >= self.max_len or len(y) >= self.max_len):
             return None
-        return x, y
+        return x, y, x_data + (y_data,)
 
     def decode_class(self, i):
         if i>=1000:

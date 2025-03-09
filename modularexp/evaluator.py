@@ -170,7 +170,7 @@ class Evaluator(object):
         )
         eval_size = len(iterator.dataset)
 
-        for (x1, len1), (x2, len2), nb_ops in iterator:
+        for (x1, len1), (x2, len2), nb_ops, _ in iterator:
 
             # cuda
             x1_, len1_, x2, len2 = to_cuda(x1, len1, x2, len2)

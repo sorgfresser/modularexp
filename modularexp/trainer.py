@@ -18,6 +18,8 @@ from torch.nn.utils import clip_grad_norm_
 import wandb
 from .optim import get_optimizer
 from .utils import to_cuda
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 logger = getLogger()
 
@@ -101,6 +103,7 @@ class Trainer(object):
                 [[(x, []), (f"{x}-AVG-STOP-PROBS", [])] for x in env.TRAINING_TASKS], []
             )
         )
+        self.counts = None
         self.last_time = time.time()
 
         # reload potential checkpoints
@@ -123,9 +126,9 @@ class Trainer(object):
             assert params.export_data is False
             s = [x.split(",") for x in params.reload_data.split(";") if len(x) > 0]
             assert (
-                len(s) >= 1
-                and all(len(x) == 4 for x in s)
-                and len(s) == len(set([x[0] for x in s]))
+                    len(s) >= 1
+                    and all(len(x) == 4 for x in s)
+                    and len(s) == len(set([x[0] for x in s]))
             )
             self.data_path = {
                 task: (train_path, valid_path, test_path)
@@ -180,10 +183,10 @@ class Trainer(object):
         """
         params = self.params
         assert (
-            params.amp == 0
-            and params.fp16 is False
-            or params.amp in [1, 2, 3]
-            and params.fp16 is True
+                params.amp == 0
+                and params.fp16 is False
+                or params.amp in [1, 2, 3]
+                and params.fp16 is True
         )
         mod_names = sorted(self.modules.keys())
         self.scaler = torch.cuda.amp.GradScaler()
@@ -248,9 +251,11 @@ class Trainer(object):
                     continue
                 stats_dict[stat] = np.mean(self.stats[stat])
             for idx, group in enumerate(self.optimizer.param_groups):
-                stats_dict[f"learning_rate_{idx}"] =  group["lr"]
-            wandb.log(stats_dict)
+                stats_dict[f"learning_rate_{idx}"] = group["lr"]
 
+            wandb.log(stats_dict)
+            if self.counts is not None:
+                wandb.log({f"train_count": self.build_histograms()})
 
         s_iter = "%7i - " % self.n_total_iter
         s_stat = " || ".join(
@@ -266,8 +271,8 @@ class Trainer(object):
 
         # learning rates
         s_lr = (
-            (" - LR: ")
-            + " / ".join("{:.4e}".format(group["lr"]) for group in self.optimizer.param_groups)
+                (" - LR: ")
+                + " / ".join("{:.4e}".format(group["lr"]) for group in self.optimizer.param_groups)
         )
 
         # processing speed
@@ -300,6 +305,7 @@ class Trainer(object):
             "best_metrics": self.best_metrics,
             "best_stopping_criterion": self.best_stopping_criterion,
             "params": {k: v for k, v in self.params.__dict__.items()},
+            "counts": self.counts
         }
 
         for k, v in self.modules.items():
@@ -352,6 +358,7 @@ class Trainer(object):
         self.n_total_iter = data["n_total_iter"]
         self.best_metrics = data["best_metrics"]
         self.best_stopping_criterion = data["best_stopping_criterion"]
+        self.counts = data["counts"]
         logger.warning(
             f"Checkpoint reloaded. Resuming at epoch {self.epoch} / iteration {self.n_total_iter} ..."
         )
@@ -363,10 +370,35 @@ class Trainer(object):
         if not self.params.is_master:
             return
         if (
-            self.params.save_periodic > 0
-            and self.epoch % self.params.save_periodic == 0
+                self.params.save_periodic > 0
+                and self.epoch % self.params.save_periodic == 0
         ):
             self.save_checkpoint("periodic-%i" % self.epoch)
+
+    def build_histograms(self) -> go.Figure:
+        """
+        Create histograms for the counts
+        """
+        bins = torch.tensor([0.001, 0.2, 1, 3, 10, 20, 35, 60], dtype=torch.float) / 100 * self.counts.shape[1]
+        full_range = torch.arange(self.counts.shape[1])
+        bin_indices = torch.bucketize(full_range, bins, right=False)
+        hist = torch.zeros((self.counts.shape[0], bins.shape[0] + 1), dtype=torch.int64)
+        hist = hist.index_add(1, bin_indices, self.counts)
+        full_bins = torch.cat((torch.tensor([0]), bins), 0)  # including left
+        # Labels [0, bins[0]), [bins[1], bins[2]) etc
+        labels = [f"[{full_bins[idx].round()}, {full_bins[idx + 1].round()})" for idx in range(len(full_bins) - 1)]
+        labels.append(f"{full_bins[-1].round()}, ∞)")
+        fig = make_subplots(1, len(self.counts), subplot_titles=[f"Parameter {idx}" for idx in
+                                                                 range(len(self.counts))])
+
+        for idx in range(len(self.counts)):
+            fig.add_trace(go.Bar(x=labels, y=hist[idx].tolist()), row=1, col=idx + 1)
+            # axs[idx].bar(full_bins, hist[idx])
+            # axs[idx].set_title(f"Count distribution for parameter {idx}")
+            # axs[idx].set_ylabel("Frequency")
+
+        fig.update_layout(height=800, width=2000, title_text="Count distributions", xaxis=dict(title="Bin Range"), yaxis=dict(title="Count"))
+        return fig
 
     def save_best_model(self, scores):
         """
@@ -390,7 +422,7 @@ class Trainer(object):
         """
         # stop if the stopping criterion has not improved after a certain number of epochs
         if self.stopping_criterion is not None and (
-            self.params.is_master or not self.stopping_criterion[0].endswith("_mt_bleu")
+                self.params.is_master or not self.stopping_criterion[0].endswith("_mt_bleu")
         ):
             metric, biggest = self.stopping_criterion
             assert metric in scores, metric
@@ -447,7 +479,7 @@ class Trainer(object):
         Export data to the disk.
         """
         env = self.env
-        (x1, len1), (x2, len2), _ = self.get_batch(task)
+        (x1, len1), (x2, len2), _, _ = self.get_batch(task)
         for i in range(len(len1)):
             # prefix
             prefix1 = [env.id2word[wid] for wid in x1[1: len1[i] - 1, i].tolist()]
@@ -472,14 +504,14 @@ class Trainer(object):
         params = self.params
 
         # batch
-        (x1, len1), (x2, len2), _ = self.get_batch(task)
+        (x1, len1), (x2, len2), _, counts = self.get_batch(task)
         # cuda
         x1, len1, x2, len2 = to_cuda(x1, len1, x2, len2)
 
         # target words to predict
         alen = torch.arange(len2.max(), dtype=torch.long, device=len2.device)
         pred_mask = (
-            alen[:, None] < len2[None] - 1
+                alen[:, None] < len2[None] - 1
         )  # do not predict anything given the last target word
         y = x2[1:].masked_select(pred_mask[:-1])
         assert len(y) == (len2 - 1).sum().item()
@@ -562,7 +594,6 @@ class Trainer(object):
                         get_scores=False,
                     )
 
-
         self.stats[task].append(loss.item())
 
         # optimize
@@ -572,3 +603,7 @@ class Trainer(object):
         self.n_equations += params.batch_size
         self.stats["processed_e"] += len1.size(0)
         self.stats["processed_w"] += (len1 + len2 - 2).sum().item()
+
+        if self.counts is None:
+            self.counts = torch.zeros((counts.shape[1], params.maxint), dtype=torch.int64)
+        self.counts = self.counts.scatter_add(1, counts.T, torch.tensor(1).expand_as(counts.T))

@@ -134,13 +134,13 @@ class EnvDataset(Dataset):
         """
         Collate samples into a batch.
         """
-        x, y = zip(*elements)
+        x, y, g = zip(*elements)
         nb_eqs = [self.env.code_class(xi, yi) for xi, yi in zip(x, y)]
         x = [torch.LongTensor([self.env.word2id[w] for w in seq]) for seq in x]
         y = [torch.LongTensor([self.env.word2id[w] for w in seq]) for seq in y]
         x, x_len = self.batch_sequences(x, self.env.pad_index, self.env.eos_index, self.env.eos_index, True)
         y, y_len = self.batch_sequences(y, self.env.pad_index, self.env.eos_index, self.env.eos_index, False)
-        return (x, x_len), (y, y_len), torch.LongTensor(nb_eqs)
+        return (x, x_len), (y, y_len), torch.LongTensor(nb_eqs), torch.LongTensor(g)
 
 
     def init_rng(self):
@@ -215,10 +215,10 @@ class EnvDataset(Dataset):
         """
         while True:
             try:
-                xy = self.env.gen_expr(self.type, self.task)
-                if xy is None:
+                xyg = self.env.gen_expr(self.type, self.task)
+                if xyg is None:
                     continue
-                x, y = xy
+                x, y, g = xyg
                 break
             except Exception as e:
                 logger.error(
@@ -233,4 +233,4 @@ class EnvDataset(Dataset):
                 continue
         self.count += 1
 
-        return x, y
+        return x, y, g
