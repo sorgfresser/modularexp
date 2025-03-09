@@ -12,6 +12,7 @@ torch = { version = "2.6.0", source = "pytorch-cpu"}
 transformers = "^4.49.0"
 accelerate = "^1.4.0"
 wandb = "^0.19.8"
+plotly = "^6.0.0"
 
 [tool.poetry.group.test]
 optional = true
