@@ -43,13 +43,12 @@ class ArithmeticEnvironment(object):
         self.base = params.base
         self.max_uniform = params.max_uniform
 
-        dims = []
         max_dim =  3
         tensor_dim =  1
         self.output_encoder = encoders.PositionalInts(params.base)
 
         self.input_encoder = encoders.NumberArray(params, max_dim, 'V', tensor_dim)
-        self.generator = generators.Sequence(params, dims)
+        self.generator = generators.Sequence(params)
 
         # vocabulary
         self.words = SPECIAL_WORDS + sorted(list(

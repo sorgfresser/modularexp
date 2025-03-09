@@ -40,11 +40,10 @@ class Generator(ABC):
 
 # empty for now
 class Sequence(Generator):
-    def __init__(self, params, dims):
+    def __init__(self, params):
         super().__init__(params)
 
         self.maxint = params.maxint
-        self.dims = dims
         self.benford = params.benford
         self.train_uniform_exp = params.train_uniform_exp
         self.test_uniform_exp = params.test_uniform_exp
