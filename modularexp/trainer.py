@@ -94,6 +94,10 @@ class Trainer(object):
 
         # training statistics
         self.epoch = 0
+        self.wandb_epochs = [500, 1000, 5000, 10000]
+        self.wandb_accuracies = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+        self.wandb_accuracies_mask = {"valid": [False] * len(self.wandb_accuracies),
+                                      "test": [False] * len(self.wandb_accuracies)}
         self.n_iter = 0
         self.n_total_iter = 0
         self.stats = OrderedDict(
@@ -319,8 +323,9 @@ class Trainer(object):
                 data["scaler"] = self.scaler.state_dict()
 
         torch.save(data, path)
-        if self.params.wandb:
-            wandb.log_model(path)
+        if self.params.wandb and self.epoch in self.wandb_epochs:
+            wandb.log_model(path, name=f"{name}-{self.epoch}")
+        return path
 
     def reload_checkpoint(self):
         """
@@ -397,7 +402,8 @@ class Trainer(object):
             # axs[idx].set_title(f"Count distribution for parameter {idx}")
             # axs[idx].set_ylabel("Frequency")
 
-        fig.update_layout(height=800, width=2000, title_text="Count distributions", xaxis=dict(title="Bin Range"), yaxis=dict(title="Count"))
+        fig.update_layout(height=800, width=2000, title_text="Count distributions", xaxis=dict(title="Bin Range"),
+                          yaxis=dict(title="Count"))
         return fig
 
     def save_best_model(self, scores):
@@ -449,6 +455,15 @@ class Trainer(object):
                     os.system("scancel " + os.environ["SLURM_JOB_ID"])
                 exit()
         self.save_checkpoint("checkpoint")
+        for task in self.params.tasks:
+            for key in self.wandb_accuracies_mask:
+                mask = self.wandb_accuracies_mask[key]
+                for idx, (masked, threshold) in enumerate(zip(mask, self.wandb_accuracies, strict=True)):
+                    if masked: continue
+                    if f"{key}_{task}_acc" in scores and scores[f"{key}_{task}_acc"] > threshold:
+                        path = self.save_checkpoint(f"{task}_{key}_acc_{threshold}")
+                        wandb.log_model(path)
+                        mask[idx] = True
         self.epoch += 1
 
     def get_batch(self, task):
