@@ -324,7 +324,7 @@ class Trainer(object):
 
         torch.save(data, path)
         if self.params.wandb and self.epoch in self.wandb_epochs:
-            wandb.log_model(path, name=f"{name}-{self.epoch}")
+            wandb.log_model(path, name=f"{wandb.run.id}-{name}-{self.epoch}")
         return path
 
     def reload_checkpoint(self):
