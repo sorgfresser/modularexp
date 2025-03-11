@@ -620,5 +620,5 @@ class Trainer(object):
         self.stats["processed_w"] += (len1 + len2 - 2).sum().item()
 
         if self.counts is None:
-            self.counts = torch.zeros((counts.shape[1], params.maxint), dtype=torch.int64)
+            self.counts = torch.zeros((counts.shape[1], params.maxint + 1), dtype=torch.int64)
         self.counts = self.counts.scatter_add(1, counts.T, torch.tensor(1).expand_as(counts.T))
