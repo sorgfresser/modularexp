@@ -439,7 +439,7 @@ class Trainer(object):
                 mask = self.wandb_accuracies_mask[key]
                 for idx, (masked, threshold) in enumerate(zip(mask, self.wandb_accuracies, strict=True)):
                     if masked: continue
-                    if f"{key}_{task}_acc" in scores and scores[f"{key}_{task}_acc"] > threshold:
+                    if f"{key}_{task}_acc" in scores and scores[f"{key}_{task}_acc"] > threshold * 100:
                         path = self.save_checkpoint(f"{task}_{key}_acc_{threshold}")
                         wandb.log_model(path)
                         mask[idx] = True
