@@ -17,9 +17,8 @@ from torch import nn
 from torch.nn.utils import clip_grad_norm_
 import wandb
 from .optim import get_optimizer
-from .utils import to_cuda
+from .utils import to_cuda, histogram_from_counts
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
 logger = getLogger()
 
@@ -94,7 +93,7 @@ class Trainer(object):
 
         # training statistics
         self.epoch = 0
-        self.wandb_epochs = [500, 1000, 5000, 10000]
+        self.wandb_epochs = [1, 10, 100, 500, 1000, 5000, 10000]
         self.wandb_accuracies = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
         self.wandb_accuracies_mask = {"valid": [False] * len(self.wandb_accuracies),
                                       "test": [False] * len(self.wandb_accuracies)}
@@ -384,27 +383,7 @@ class Trainer(object):
         """
         Create histograms for the counts
         """
-        bins = torch.tensor([0.001, 0.2, 1, 3, 10, 20, 35, 60], dtype=torch.float) / 100 * self.counts.shape[1]
-        full_range = torch.arange(self.counts.shape[1])
-        bin_indices = torch.bucketize(full_range, bins, right=False)
-        hist = torch.zeros((self.counts.shape[0], bins.shape[0] + 1), dtype=torch.int64)
-        hist = hist.index_add(1, bin_indices, self.counts)
-        full_bins = torch.cat((torch.tensor([0]), bins), 0)  # including left
-        # Labels [0, bins[0]), [bins[1], bins[2]) etc
-        labels = [f"[{full_bins[idx].round()}, {full_bins[idx + 1].round()})" for idx in range(len(full_bins) - 1)]
-        labels.append(f"{full_bins[-1].round()}, ∞)")
-        fig = make_subplots(1, len(self.counts), subplot_titles=[f"Parameter {idx}" for idx in
-                                                                 range(len(self.counts))])
-
-        for idx in range(len(self.counts)):
-            fig.add_trace(go.Bar(x=labels, y=hist[idx].tolist()), row=1, col=idx + 1)
-            # axs[idx].bar(full_bins, hist[idx])
-            # axs[idx].set_title(f"Count distribution for parameter {idx}")
-            # axs[idx].set_ylabel("Frequency")
-
-        fig.update_layout(height=800, width=2000, title_text="Count distributions", xaxis=dict(title="Bin Range"),
-                          yaxis=dict(title="Count"))
-        return fig
+        return histogram_from_counts(self.counts)
 
     def save_best_model(self, scores):
         """
