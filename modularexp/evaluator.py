@@ -13,7 +13,7 @@ import torch
 import numpy as np
 import wandb
 
-from .utils import to_cuda
+from .utils import to_cuda, histogram_from_counts
 
 
 logger = getLogger()
@@ -69,6 +69,7 @@ class Evaluator(object):
         self.params = trainer.params
         self.env = trainer.env
         Evaluator.ENV = trainer.env
+        self.counts = None
 
     def run_all_evals(self):
         """
@@ -87,6 +88,8 @@ class Evaluator(object):
             data_type_list = ["valid", "test"]
         else:
             data_type_list = ["valid"]
+        if self.counts is None:
+            self.counts = {t: None for t in data_type_list}
 
         with torch.no_grad():
             for data_type in data_type_list:
@@ -170,7 +173,7 @@ class Evaluator(object):
         )
         eval_size = len(iterator.dataset)
 
-        for (x1, len1), (x2, len2), nb_ops, _ in iterator:
+        for (x1, len1), (x2, len2), nb_ops, counts in iterator:
 
             # cuda
             x1_, len1_, x2, len2 = to_cuda(x1, len1, x2, len2)
@@ -343,6 +346,10 @@ class Evaluator(object):
                 f"    Found {valid.sum().item()}/{bs} solutions in beam hypotheses."
             )
 
+            if self.counts[data_type] is None:
+                self.counts[data_type] = torch.zeros((counts.shape[1], params.maxint + 1), dtype=torch.int64)
+            self.counts[data_type] = self.counts[data_type].scatter_add(1, counts.T, torch.tensor(1).expand_as(counts.T))
+
             # export evaluation details
             if params.eval_verbose:
                 assert len(beam_log) == bs
@@ -393,6 +400,7 @@ class Evaluator(object):
                     f"({100. * n_valid[i].item() / max(n_total[i].item(), 1):.2f}%)"
                 )
         wandb.log(scores)
+        wandb.log({f"{data_type}_count": histogram_from_counts(self.counts[data_type])})
         if data_type == "test":
             logger.info(f"{data_type} predicted pairs")
             for i in range(102):

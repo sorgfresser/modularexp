@@ -19,9 +19,10 @@ import subprocess
 import errno
 import signal
 from functools import wraps, partial
-
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import torch
 from .logger import create_logger
-
 
 FALSY_STRINGS = {'off', 'false', '0'}
 TRUTHY_STRINGS = {'on', 'true', '1'}
@@ -137,7 +138,6 @@ class TimeoutError(BaseException):
 
 
 def timeout(seconds=10, error_message=os.strerror(errno.ETIME)):
-
     def decorator(func):
 
         def _handle_timeout(repeat_id, signum, frame):
@@ -167,3 +167,24 @@ def timeout(seconds=10, error_message=os.strerror(errno.ETIME)):
         return wraps(func)(wrapper)
 
     return decorator
+
+
+def histogram_from_counts(counts) -> go.Figure:
+    assert len(counts.shape) == 2
+    bins = torch.tensor([0.001, 0.2, 1, 3, 10, 20, 35, 60], dtype=torch.float) / 100 * counts.shape[1]
+    full_range = torch.arange(counts.shape[1])
+    bin_indices = torch.bucketize(full_range, bins, right=False)
+    hist = torch.zeros((counts.shape[0], bins.shape[0] + 1), dtype=torch.int64)
+    hist = hist.index_add(1, bin_indices, counts)
+    full_bins = torch.cat((torch.tensor([0]), bins), 0)  # including left
+    # Labels [0, bins[0]), [bins[1], bins[2]) etc
+    labels = [f"[{full_bins[idx].round()}, {full_bins[idx + 1].round()})" for idx in range(len(full_bins) - 1)]
+    labels.append(f"{full_bins[-1].round()}, ∞)")
+    fig = make_subplots(1, len(counts), subplot_titles=[f"Parameter {idx}" for idx in
+                                                             range(len(counts))])
+    for idx in range(len(counts)):
+        fig.add_trace(go.Bar(x=labels, y=hist[idx].tolist()), row=1, col=idx + 1)
+
+    fig.update_layout(height=800, width=2000, title_text="Count distributions", xaxis=dict(title="Bin Range"),
+                      yaxis=dict(title="Count"))
+    return fig
