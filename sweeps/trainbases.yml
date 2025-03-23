@@ -12,7 +12,7 @@ parameters:
   env_base_seed:
     value: 42
   base:
-    values: [1000, 1013, 1279]
+    values: [999, 1013, 1279]
   num_workers:
     value: 20
   max_epoch:
