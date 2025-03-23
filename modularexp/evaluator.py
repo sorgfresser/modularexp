@@ -407,7 +407,7 @@ class Evaluator(object):
                     )
         if params.wandb:
             wandb.log(scores, step=self.trainer.epoch)
-            wandb.log({f"{data_type}_count": histogram_from_counts(self.counts[data_type])})
+            wandb.log({f"{data_type}_count": histogram_from_counts(self.counts[data_type])}, step=self.trainer.epoch)
         if data_type == "test":
             logger.info(f"{data_type} predicted pairs")
             for i in range(102):
