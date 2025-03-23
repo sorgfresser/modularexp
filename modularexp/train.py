@@ -185,7 +185,7 @@ def get_parser():
                         help="Master port (for multi-node SLURM jobs)")
     parser.add_argument("--windows", type=bool_flag, default=False,
                         help="Windows version (no multiprocessing for eval)")
-    parser.add_argument("--wandb", type=str, default="", help="Wandb API key. If specified, will log to wandb")
+    parser.add_argument("--wandb", type=str, default="", help="Wandb API key or 'true'. If specified, will log to wandb")
     parser.add_argument("--wandb_run", type=str, default="",
                         help="Run ID for Wandb. Will resume the run if already ongoing.")
     return parser
@@ -288,12 +288,22 @@ if __name__ == '__main__':
     # check parameters
     check_model_params(params)
     if params.wandb:
-        wandb.login(key=params.wandb)
+        # Small hack to not have to expose API key in sweeps
+        if params.wandb.lower() != "true":
+            wandb.login(key=params.wandb)
         config = {"dropout": params.dropout, "encoder_layers": params.n_enc_layers,
                   "decoder_layers": params.n_dec_layers, "batch_size": params.batch_size,
                   "encoder_dim": params.enc_emb_dim, "decoder_dim": params.dec_emb_dim,
                   "seed": params.env_base_seed, "eval_size": params.eval_size, "epoch_size": params.epoch_size,
-                  "max_epoch": params.max_epoch, "eval_batch_size": params.batch_size_eval}
+                  "max_epoch": params.max_epoch, "eval_batch_size": params.batch_size_eval,
+                  "encoder_heads": params.n_enc_heads, "decoder_heads": params.n_dec_heads,
+                  "encoder_ffn_hidden_layers": params.n_enc_hidden_layers, "decoder_ffn_hidden_layers": params.n_dec_hidden_layers,
+                  "attention_dropout": params.attention_dropout, "tie_embeddings": params.share_inout_emb,
+                  "gradient_clipping": params.clip_grad_norm, "maxint": params.maxint, "benford": params.benford,
+                  "train_uniform_outcome": params.train_uniform_exp, "train_inverse_outcome": params.train_inverse_dist,
+                  "train_sqrt_outcome": params.train_sqrt_dist, "train_3_over_2_outcome": params.train_32_dist,
+                  "max_inverse": params.max_inverse, "max_uniform": params.max_uniform, "test_uniform_outcome": params.test_uniform_exp,
+                  "mixture": params.mixture}
         if params.wandb_run:
             wandb.init(id=params.wandb_run, resume="allow", config=config)
         else:

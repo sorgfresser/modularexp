@@ -1,0 +1,25 @@
+program: modularexp/train.py
+name: modexptrainregular
+method: grid
+metric:
+  goal: maximize
+  name: valid_arithmetic_perfect
+parameters:
+  train_uniform_exp:
+    value: false
+  benford:
+    values: [true, false]
+  env_base_seed:
+    value: 42
+  base:
+    value: 1000
+  num_workers:
+    value: 20
+  wandb:
+    value: true
+  dump_path:
+    value: ./localpath
+  batch_size:
+    value: 256
+  batch_size_eval:
+    value: 1024
