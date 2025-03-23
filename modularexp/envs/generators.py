@@ -17,7 +17,7 @@ logger = getLogger()
 def fast_exp(b, e, m):
     r = 1
     if 1 & e:
-        r = b
+        r = b % m
     while e:
         e >>= 1
         b = (b * b) % m
@@ -74,13 +74,9 @@ class Sequence(Generator):
     def integer_sequence(self, len, rng, type=None, max=None):
         maxint = self.maxint if max is None else max
         if type == "train" and self.benford:
-            # with probability 1 / maxint + 1, sample 0 instead
-            p = 1 / (maxint + 1)
-            zero_mask = rng.rand(len) < p
-            lgs = math.log10(maxint) * rng.rand(len)
+            lgs = math.log10(maxint + 1) * rng.rand(len)
             result = np.int64(10 ** lgs)
-            result[zero_mask] = 0
-            return result
+            return result - 1
         return rng.randint(0, maxint + 1, len)
 
     def generate(self, rng: np.random.RandomState, type=None):
