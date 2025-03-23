@@ -94,7 +94,7 @@ class Trainer(object):
         # training statistics
         self.epoch = 0
         self.wandb_epochs = [1, 10, 100, 500, 1000, 5000, 10000]
-        self.wandb_accuracies = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+        self.wandb_accuracies = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99]
         self.wandb_accuracies_mask = {"valid": [False] * len(self.wandb_accuracies),
                                       "test": [False] * len(self.wandb_accuracies)}
         self.n_iter = 0

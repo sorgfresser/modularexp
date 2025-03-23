@@ -406,7 +406,7 @@ class Evaluator(object):
                         f"({100. * n_pairs[param_idx][i][i].item() / max(n_pairs[param_idx][i].sum().item(), 1):.2f}%)"
                     )
         if params.wandb:
-            wandb.log(scores)
+            wandb.log(scores, step=self.trainer.epoch)
             wandb.log({f"{data_type}_count": histogram_from_counts(self.counts[data_type])})
         if data_type == "test":
             logger.info(f"{data_type} predicted pairs")
