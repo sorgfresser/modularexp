@@ -256,9 +256,9 @@ class Trainer(object):
             for idx, group in enumerate(self.optimizer.param_groups):
                 stats_dict[f"learning_rate_{idx}"] = group["lr"]
 
-            wandb.log(stats_dict)
+            wandb.log(stats_dict, step=self.epoch)
             if self.counts is not None:
-                wandb.log({f"train_count": self.build_histograms()})
+                wandb.log({f"train_count": self.build_histograms()}, step=self.epoch)
 
         s_iter = "%7i - " % self.n_total_iter
         s_stat = " || ".join(
