@@ -441,7 +441,8 @@ class Trainer(object):
                     if masked: continue
                     if f"{key}_{task}_acc" in scores and scores[f"{key}_{task}_acc"] > threshold * 100:
                         path = self.save_checkpoint(f"{task}_{key}_acc_{threshold}")
-                        wandb.log_model(path)
+                        if self.params.wandb:
+                            wandb.log_model(path)
                         mask[idx] = True
         self.epoch += 1
 
@@ -498,7 +499,7 @@ class Trainer(object):
         params = self.params
 
         # batch
-        (x1, len1), (x2, len2), _, counts = self.get_batch(task)
+        (x1, len1), (x2, len2), counts = self.get_batch(task)
         # cuda
         x1, len1, x2, len2 = to_cuda(x1, len1, x2, len2)
 

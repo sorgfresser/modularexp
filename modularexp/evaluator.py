@@ -12,7 +12,7 @@ import os
 import torch
 import numpy as np
 import wandb
-
+from .trainer import Trainer
 from .utils import to_cuda, histogram_from_counts
 
 
@@ -60,7 +60,7 @@ class Evaluator(object):
 
     ENV = None
 
-    def __init__(self, trainer):
+    def __init__(self, trainer: Trainer):
         """
         Initialize evaluator.
         """
@@ -160,7 +160,7 @@ class Evaluator(object):
         n_valid_d1 = 0
         n_valid_d2 = 0
         n_valid_d3 = 0
-        n_pairs = torch.zeros((102,102), dtype=torch.long)
+        n_pairs = torch.zeros((self.env.variable_count(), 102, 102), dtype=torch.long)
 
         # iterator
         iterator = self.env.create_test_iterator(
@@ -173,7 +173,7 @@ class Evaluator(object):
         )
         eval_size = len(iterator.dataset)
 
-        for (x1, len1), (x2, len2), nb_ops, counts in iterator:
+        for (x1, len1), (x2, len2), counts in iterator:
 
             # cuda
             x1_, len1_, x2, len2 = to_cuda(x1, len1, x2, len2)
@@ -228,13 +228,16 @@ class Evaluator(object):
                 tgt = idx_to_infix(env, x2[out_offset : len2[i] - 1, i].tolist(), False)
                 if valid[i]:
                     beam_log[i] = {"src": src, "tgt": tgt, "hyps": [(tgt, None, True)]}
-                    result = (nb_ops[i] % 1000) if (nb_ops[i] % 1000) < 101 else 101
-                    n_pairs[result][result] += 1
+                    for param_idx in range(len(n_pairs)):
+                        assert counts[i][param_idx] <= params.maxint
+                        result = counts[i][param_idx] % 101
+                        n_pairs[param_idx][result][result] += 1
 
             # stats
             xe_loss += loss.item() * len(y)
-            n_valid.index_add_(-1, nb_ops, valid)
-            n_total.index_add_(-1, nb_ops, torch.ones_like(nb_ops))
+            # Assuming outcome is last one
+            n_valid.index_add_(-1, counts[:, -1], valid)
+            n_total.index_add_(-1, counts[:, -1], torch.ones_like(counts[:, -1]))
 
             # continue if everything is correct. if eval_verbose, perform
             # a full beam search, even on correct greedy generations
@@ -321,15 +324,16 @@ class Evaluator(object):
                 is_valid3 = gen["is_valid3"]
                 is_valid4 = gen["is_valid4"]
                 is_b_valid = is_valid > 0
-                if not valid[i]:
-                    result = (nb_ops[i] % 1000) if (nb_ops[i] % 1000) < 101 else 101
-                    prediction = 101 if (is_valid4 is None or is_valid4 > 101) else is_valid4
-                    n_pairs[result][prediction] += 1
-                if is_valid > 0 and not valid[i]:
-                    n_correct += 1
-                    n_valid[nb_ops[i]] += 1
-                    valid[i] = 1
-                
+                for param_idx in range(len(n_pairs)):
+                    if not valid[i]:
+                        result = counts[i][param_idx] % 101
+                        prediction = 101 if (is_valid4 is None or is_valid4 > params.maxint + 1) else is_valid4 % 101
+                        n_pairs[param_idx][result][prediction] += 1
+                    if is_valid > 0 and not valid[i]:
+                        n_correct += 1
+                        n_valid[counts[i, -1]] += 1
+                        valid[i] = 1
+
                 if not valid[i]:
                     if is_valid2 > 0:
                         n_valid_d1 += 1
@@ -387,26 +391,30 @@ class Evaluator(object):
         )
 
         # per class perplexity and prediction accuracy
-        for i in range(len(n_total)):
-            if n_total[i].item() == 0:
-                continue
-            e = env.decode_class(i)
-            scores[f"{data_type}_{task}_acc_{e}"] = (
-                100.0 * n_valid[i].item() / max(n_total[i].item(), 1)
-            )
-            if n_valid[i].item() > 0:
-                logger.info(
-                    f"{e}: {n_valid[i].item()} / {n_total[i].item()} "
-                    f"({100. * n_valid[i].item() / max(n_total[i].item(), 1):.2f}%)"
+        for param_idx in range(len(n_pairs)):
+            for i in range(len(n_pairs[param_idx])):
+                if n_pairs[param_idx][i].sum().item() == 0:
+                    continue
+                assert (n_pairs[-1][i][i] == n_valid[i]).item()
+                assert (n_pairs[-1][i].sum() == n_total[i]).item()
+                scores[f"{data_type}_{task}_acc_{i}_{param_idx}"] = (
+                    100.0 * n_pairs[param_idx][i][i].item() / max(n_pairs[param_idx][i].sum().item(), 1)
                 )
-        wandb.log(scores)
-        wandb.log({f"{data_type}_count": histogram_from_counts(self.counts[data_type])})
+                if n_pairs[param_idx][i][i].item() > 0:
+                    logger.info(
+                        f"{param_idx}: {i}: {n_pairs[param_idx][i][i].item()} / {n_pairs[param_idx][i].sum().item()} "
+                        f"({100. * n_pairs[param_idx][i][i].item() / max(n_pairs[param_idx][i].sum().item(), 1):.2f}%)"
+                    )
+        if params.wandb:
+            wandb.log(scores)
+            wandb.log({f"{data_type}_count": histogram_from_counts(self.counts[data_type])})
         if data_type == "test":
             logger.info(f"{data_type} predicted pairs")
             for i in range(102):
                 for j in range(102):
-                    if n_pairs[i][j].item() >= 10:
-                        logger.info(f"{i}-{j}: {n_pairs[i][j].item()} ({100. * n_pairs[i][j].item() / n_pairs[i].sum().item():2f}%)")
+                    for param_idx in range(len(n_pairs)):
+                        if n_pairs[param_idx][i][j].item() >= 10:
+                            logger.info(f"{param_idx} - {i} - {j}: {n_pairs[param_idx][i][j].item()} ({100. * n_pairs[param_idx][i][j].item() / n_pairs[param_idx][i].sum().item():2f}%)")
 
     def enc_dec_step_beam(self, data_type, task, scores, size=None):
         """
