@@ -9,14 +9,11 @@ import argparse
 
 from modularexp.model.transformer import TransformerModel
 from modularexp.envs.arithmetic import ArithmeticEnvironment
-from modularexp.utils import bool_flag  # assumes bool_flag is defined
+from modularexp.utils import bool_flag
 
-#########################################
 # Checkpoint Remapping Functions
-#########################################
 
 def get_ckpt_value(ckpt, key):
-    """Retrieve the value for 'key' from ckpt, trying an alternate prefix if needed."""
     if key in ckpt:
         return ckpt[key]
     if key.startswith("transformer."):
@@ -28,7 +25,6 @@ def get_ckpt_value(ckpt, key):
     raise KeyError(f"Key {key} not found in checkpoint; also tried {alt_key}.")
 
 def maybe_transpose(weight, expected_shape):
-    """Transpose weight if necessary."""
     if weight.shape == expected_shape:
         return weight
     elif weight.shape == (expected_shape[1], expected_shape[0]):
@@ -38,10 +34,6 @@ def maybe_transpose(weight, expected_shape):
         return weight
 
 def remap_checkpoint(ckpt, config):
-    """
-    Remap keys from a training checkpoint to match the model's expected key names.
-    Splits merged self-attention weights if needed.
-    """
     new_state = {}
     new_state["position_embeddings.weight"] = get_ckpt_value(ckpt, "transformer.position_embeddings.weight")
     new_state["embeddings.weight"] = get_ckpt_value(ckpt, "transformer.embeddings.weight")
@@ -109,12 +101,9 @@ def remap_checkpoint(ckpt, config):
     
     return new_state
 
-#########################################
 # Model Loading
-#########################################
 
 def load_model(checkpoint_path, params, id2word):
-    """Load the TransformerModel from a checkpoint, remapping keys if needed."""
     model = TransformerModel(params, id2word, is_encoder=True, with_output=True)
     checkpoint = torch.load(checkpoint_path, map_location=torch.device("cpu"))
     if "encoder" in checkpoint:
@@ -132,18 +121,13 @@ def load_model(checkpoint_path, params, id2word):
 #########################################
 
 class PatchingDataset(Dataset):
-    """
-    Dataset for activation patching using the ArithmeticEnvironment.
-    Each sample is a tuple: (input sequence, output sequence, extra info).
-    (Extra info is expected to contain the numbers a, b, c, and d for modular exponentiation.)
-    """
     def __init__(self, env, task, train, params, path=None, size=None, data_type=None):
         super(PatchingDataset, self).__init__()
         self.env = env
         self.task = task
         self.train = train
         self.size = 10000
-        self.data_type = data_type  # "train", "valid", or "test"
+        self.data_type = data_type
 
     def __len__(self):
         return self.size
@@ -152,8 +136,8 @@ class PatchingDataset(Dataset):
         sample = self.env.gen_expr(self.data_type, self.task)
         while sample is None:
             sample = self.env.gen_expr(self.data_type, self.task)
-        return sample  # (x, y, info)
-
+        return sample
+    
     def collate_fn(self, elements):
         x, y, _ = zip(*elements)
         nb_eqs = [self.env.code_class(xi, yi) for xi, yi in zip(x, y)]
@@ -175,15 +159,9 @@ class PatchingDataset(Dataset):
             sent[lengths[i]-1, i] = eos_index
         return sent, lengths
 
-#########################################
 # Activation Collection & Patching Evaluation
-#########################################
 
-def activation_collection_and_patching_evaluation(model, dataloader, save_dir="modexp/activations"):
-    """
-    Runs a forward pass to collect attention head activations from each transformer layer,
-    performs injection patching on a target layer, and saves the collected activations and logits.
-    """
+def activation_collection_and_patching_evaluation(model, dataloader, save_dir="modularexp/activations"):
     os.makedirs(save_dir, exist_ok=True)
     
     baseline_activations = {i: [] for i in range(len(model.layers))}
@@ -230,7 +208,7 @@ def activation_collection_and_patching_evaluation(model, dataloader, save_dir="m
         h.remove()
     
     # Injection patching on a target layer
-    target_layer_index = 2  # adjust as needed
+    target_layer_index = 2
     target_module = model.layers[target_layer_index].self_attention
     if patched_activations[target_layer_index]:
         patched_act = patched_activations[target_layer_index][0]  # shape: (batch, n_heads, seq_len, dim_per_head)
@@ -273,35 +251,35 @@ def activation_collection_and_patching_evaluation(model, dataloader, save_dir="m
     print("Patched logits (first 5 values of token 0):", patched_logits[0, :5])
     print("Injected logits (first 5 values of token 0):", injected_logits[0, :5])
 
-#########################################
-# Sweep Experiment for Modular Exponentiation
-#########################################
+# Sweep Experiment
 
+# --- Modified gen_expr_with_params ---
 def gen_expr_with_params(env, data_type, task, param_dict):
     """
     Helper to generate a modular exponentiation sample with given parameters.
-    Since env.gen_expr() does not support extra keyword arguments, we call it normally
-    and then override the info field with our chosen parameters.
-    Also, we clip 'a' and 'b' to be within [0, 10^6).
+]    
+    For input, we encode as:
+      ['V3', '+'] + list(str(a)) + ['+'] + list(str(b)) + ['+'] + list(str(c))
+    For output, we encode as:
+      ['+'] + list(str(d))
+    where d = pow(a, b, c).
     """
     # Enforce bounds on a and b
-    param_dict["a"] = max(0, min(int(param_dict["a"]), 10**6 - 1))
-    param_dict["b"] = max(0, min(int(param_dict["b"]), 10**6 - 1))
-    # Generate a sample normally
-    sample = env.gen_expr(data_type, task)
-    if sample is None:
-        return None
-    x, y, _ = sample
-    # Override info with our chosen parameters (as a tuple)
-    info = (param_dict["a"], param_dict["b"], param_dict["c"], param_dict["d"])
+    a = max(0, min(int(param_dict["a"]), 10**6 - 1))
+    b = max(0, min(int(param_dict["b"]), 10**6 - 1))
+    c = int(param_dict["c"])
+    # Compute d = a^b mod c
+    d = pow(a, b, c)
+    
+    # Construct the input token sequence:
+    x = ['V3', '+'] + list(str(a)) + ['+'] + list(str(b)) + ['+'] + list(str(c))
+    # Construct the output token sequence:
+    y = ['+'] + list(str(d))
+    info = (a, b, c, d)
     return (x, y, info)
+# --- End modification ---
 
 def sweep_experiment(model, env, base_sample, data_type="train", task="arithmetic"):
-    """
-    For a given base sample (assumed to be (x, y, info) with x, y as lists of tokens
-    and info as a tuple/list with at least 4 elements: (a, b, c, d)),
-    vary each parameter by ±1 and compute a metric (logit difference for the correct answer token).
-    """
     x_base, y_base, info = base_sample
     if isinstance(info, (list, tuple)) and len(info) >= 4:
         a, b, c, d = info[:4]
@@ -352,11 +330,6 @@ def sweep_experiment(model, env, base_sample, data_type="train", task="arithmeti
     torch.save(results, sweep_save_path)
     print(f"Sweep experiment results saved to {sweep_save_path}")
     return results
-
-
-#########################################
-# Main Execution
-#########################################
 
 def main():
     parser = argparse.ArgumentParser()
@@ -429,10 +402,9 @@ def main():
     activation_collection_and_patching_evaluation(model, dataloader)
     
     # Run sweep experiment on one sample to vary a, b, c, and d
-    sample = dataset[0]
-    print("Running sweep experiment on a sample...")
-    sweep_results = sweep_experiment(model, env, sample)
-    print("Sweep experiment results:", sweep_results)
+    simple_params = {"a": 160, "b": 2, "c": 120, "d": 40}
+    simple_sample = gen_expr_with_params(env, "train", "arithmetic", simple_params)
+    print(simple_sample)
     
 if __name__ == "__main__":
     main()
