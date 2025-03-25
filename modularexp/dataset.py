@@ -135,12 +135,11 @@ class EnvDataset(Dataset):
         Collate samples into a batch.
         """
         x, y, g = zip(*elements)
-        nb_eqs = [self.env.code_class(xi, yi) for xi, yi in zip(x, y)]
         x = [torch.LongTensor([self.env.word2id[w] for w in seq]) for seq in x]
         y = [torch.LongTensor([self.env.word2id[w] for w in seq]) for seq in y]
         x, x_len = self.batch_sequences(x, self.env.pad_index, self.env.eos_index, self.env.eos_index, True)
         y, y_len = self.batch_sequences(y, self.env.pad_index, self.env.eos_index, self.env.eos_index, False)
-        return (x, x_len), (y, y_len), torch.LongTensor(nb_eqs), torch.LongTensor(g)
+        return (x, x_len), (y, y_len),torch.LongTensor(g)
 
 
     def init_rng(self):

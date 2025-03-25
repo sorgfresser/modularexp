@@ -94,14 +94,10 @@ class ArithmeticEnvironment(object):
             return str(i//1000)+"-"+str(i%1000)
         return str(i)
 
-    def code_class(self, xi, yi):
-        top = 0
-        v = self.output_encoder.decode(yi)
-        if v is None:
-            return 0
-        if v > self.max_uniform and v > 100:
-            v=101
-        return 1000*top + v
+    def variable_count(self):
+        """ Return overall count of variables, i.e. operands and outcomes"""
+        inp, _ = self.generator.generate((np.random.RandomState(None)))
+        return len(inp) + 1
 
     def check_prediction(self, src, tgt, hyp):
         w = self.output_encoder.decode(hyp)
