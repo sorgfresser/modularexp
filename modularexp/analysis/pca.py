@@ -37,16 +37,18 @@ def maybe_transpose(weight, expected_shape):
 
 def remap_checkpoint(ckpt, config):
     """
-    Remap checkpoint keys to those expected by GPT2LMHeadModel.
-    Transposes weights for linear layers as needed.
+    Remap checkpoint keys from the custom transformer (without a "transformer." prefix)
+    to the keys expected by GPT2LMHeadModel. Transposes weights for linear layers as needed.
     """
     new_state = {}
-    new_state["transformer.wte.weight"] = get_ckpt_value(ckpt, "transformer.embeddings.weight")
-    new_state["transformer.wpe.weight"] = get_ckpt_value(ckpt, "transformer.position_embeddings.weight")
+    # Remap embedding weights.
+    new_state["transformer.wte.weight"] = get_ckpt_value(ckpt, "embeddings.weight")
+    new_state["transformer.wpe.weight"] = get_ckpt_value(ckpt, "position_embeddings.weight")
 
-    n_layers = 4  # Adjust if needed
+    n_layers = config.n_layer  # use number of layers from config
     for i in range(n_layers):
-        ckpt_prefix = f"transformer.layers.{i}"
+        # Use "layers.{i}" from the checkpoint instead of "transformer.layers.{i}"
+        ckpt_prefix = f"layers.{i}"
         gpt2_prefix = f"transformer.h.{i}"
 
         # Layer norm 1.
@@ -83,10 +85,10 @@ def remap_checkpoint(ckpt, config):
         new_state[f"{gpt2_prefix}.mlp.c_proj.weight"] = maybe_transpose(w_proj_mlp, (4 * config.n_embd, config.n_embd))
         new_state[f"{gpt2_prefix}.mlp.c_proj.bias"]   = get_ckpt_value(ckpt, f"{ckpt_prefix}.ffn.lin2.bias")
 
-    # Final layer norm.
+    # Final layer norm (if present in checkpoint)
     try:
-        new_state["transformer.ln_f.weight"] = get_ckpt_value(ckpt, "transformer.layer_norm_emb.weight")
-        new_state["transformer.ln_f.bias"]   = get_ckpt_value(ckpt, "transformer.layer_norm_emb.bias")
+        new_state["transformer.ln_f.weight"] = get_ckpt_value(ckpt, "layer_norm_emb.weight")
+        new_state["transformer.ln_f.bias"]   = get_ckpt_value(ckpt, "layer_norm_emb.bias")
     except KeyError:
         new_state["transformer.ln_f.weight"] = torch.ones(new_state["transformer.wte.weight"].size(1))
         new_state["transformer.ln_f.bias"]   = torch.zeros(new_state["transformer.wte.weight"].size(1))
@@ -100,7 +102,7 @@ def remap_checkpoint(ckpt, config):
 def load_model(checkpoint_path):
     """
     Loads the GPT2LMHeadModel with a configuration matching the checkpoint,
-    remaps checkpoint keys, and sets the model to output hidden states.
+    remaps checkpoint keys (if needed), and sets the model to output hidden states.
     """
     if os.path.exists("vocab.json") and os.path.exists("merges.txt"):
         tokenizer = GPT2Tokenizer("vocab.json", "merges.txt")
@@ -133,8 +135,10 @@ def load_model(checkpoint_path):
     )
     model = GPT2LMHeadModel(config)
 
-    # Load and remap checkpoint.
+    # Load checkpoint.
     checkpoint = torch.load(checkpoint_path, map_location=torch.device("cpu"))
+    
+    # Check for the "encoder" key and use it for remapping.
     if "encoder" in checkpoint:
         print("Found 'encoder' in checkpoint. Remapping keys...")
         encoder_ckpt = checkpoint["encoder"]
@@ -146,6 +150,7 @@ def load_model(checkpoint_path):
 
     model.eval()
     return model, tokenizer
+
 
 def visualize_numeric_embeddings(
     model,
@@ -253,18 +258,12 @@ def visualize_numeric_embeddings(
                 return 0
         return order
 
-    # -------------------------- EXTRACT EMBEDDINGS --------------------------
     embeddings = model.transformer.wte.weight.detach().cpu().numpy()
     token_count = embeddings.shape[0]
-
-    # -------------------------- PCA REDUCTION --------------------------
     pca = PCA(n_components=n_components)
     embeddings_proj = pca.fit_transform(embeddings)
     print("Explained variance ratio:", pca.explained_variance_ratio_)
-
-    # -------------------------- COLLECT NUMERIC TOKENS --------------------------
     tokens = [tokenizer.decode([i]).strip() for i in range(token_count)]
-
     numeric_indices = []
     numeric_values = []
     for i, token in enumerate(tokens):
@@ -278,55 +277,40 @@ def visualize_numeric_embeddings(
                 if val > 0:
                     numeric_indices.append(i)
                     numeric_values.append(val)
-
     numeric_points = embeddings_proj[numeric_indices]
     numeric_values = np.array(numeric_values)
-
-    # -------------------------- DETERMINE COLOR VALUES --------------------------
     if color_scheme == "value":
         color_vals = numeric_values
         color_label = "Numeric Token Value"
-
     elif color_scheme == "prime":
         color_vals = np.array([1 if is_prime(v) else 0 for v in numeric_values])
         color_label = "Is Prime? (prime=1, composite=0)"
-
     elif color_scheme == "parity":
         color_vals = numeric_values % 2
         color_label = "Parity (0=even, 1=odd)"
-
     elif color_scheme == "lowest_prime_factor":
         color_vals = np.array([get_lowest_prime_factor(v) for v in numeric_values])
         color_label = "Lowest Prime Factor"
-
     elif color_scheme == "divisor_count":
         color_vals = np.array([divisor_count(v) for v in numeric_values])
         color_label = "Number of Divisors"
-
     elif color_scheme == "totient":
         color_vals = np.array([totient(v) for v in numeric_values])
         color_label = "Euler's Totient φ(n)"
-
     elif color_scheme == "multiplicative_order":
-        mod = 7  # fixed small modulus; adjust as desired
+        mod = 7
         color_vals = np.array([multiplicative_order(v, mod) for v in numeric_values])
         color_label = f"Multiplicative Order mod {mod}"
-
     elif color_scheme == "primitive_root":
-        p = 11  # fixed prime; adjust as desired
-        # For each number v, if v mod p is not 0 and its multiplicative order modulo p is p-1, mark as primitive root.
+        p = 11
         color_vals = np.array([1 if (v % p != 0 and multiplicative_order(v, p) == p-1) else 0 for v in numeric_values])
         color_label = f"Primitive Root mod {p} (1 if yes, 0 if no)"
-
     elif color_scheme == "residue":
-        mod = 5  # fixed small modulus; adjust as desired
+        mod = 5
         color_vals = numeric_values % mod
         color_label = f"Residue mod {mod}"
-
     else:
-        raise ValueError(f"Unknown color_scheme '{color_scheme}'. Please choose from the supported schemes.")
-
-    # -------------------------- PLOT --------------------------
+        raise ValueError(f"Unknown color_scheme '{color_scheme}'.")
     if n_components == 2:
         plt.figure(figsize=(12, 8))
         sc = plt.scatter(
@@ -340,13 +324,11 @@ def visualize_numeric_embeddings(
         plt.title(f"PCA of Numeric Token Embeddings (2D, color by {color_scheme})")
         plt.xlabel("PC 1")
         plt.ylabel("PC 2")
-
         for idx, val in enumerate(numeric_values):
             if idx % label_stride == 0:
                 x, y = numeric_points[idx, 0], numeric_points[idx, 1]
                 plt.annotate(str(val), (x, y), fontsize=9, xytext=(5, 2), textcoords="offset points")
         plt.grid(True)
-
     elif n_components == 3:
         fig = plt.figure(figsize=(12, 8))
         ax = fig.add_subplot(111, projection='3d')
@@ -363,7 +345,6 @@ def visualize_numeric_embeddings(
         ax.set_xlabel("PC 1")
         ax.set_ylabel("PC 2")
         ax.set_zlabel("PC 3")
-
         for idx, val in enumerate(numeric_values):
             if idx % label_stride == 0:
                 x, y, z = numeric_points[idx, 0], numeric_points[idx, 1], numeric_points[idx, 2]
@@ -406,9 +387,8 @@ def visualize_decoder_hidden_states(model, tokenizer, prompt, layer_idx=-1):
 def main():
     checkpoint_path = r"modularexp\checkpoints\checkpoint.pth"
     model, tokenizer = load_model(checkpoint_path)
-    components = 2
-    
-    # Original visualizations
+    components = 3
+
     visualize_numeric_embeddings(
         model, 
         tokenizer,
@@ -439,8 +419,6 @@ def main():
         max_token=200,
         n_components=components
     )
-    
-    # New visualizations
     visualize_numeric_embeddings(
         model, 
         tokenizer,

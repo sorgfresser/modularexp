@@ -330,7 +330,7 @@ class TransformerModel(nn.Module):
         ), "transformer dim must be a multiple of n_heads"
 
                 
-        # embeddings
+        # embeddingsz
         self.position_embeddings = Embedding(N_MAX_POSITIONS, self.dim)
         if params.sinusoidal_embeddings:
             create_sinusoidal_embeddings(
