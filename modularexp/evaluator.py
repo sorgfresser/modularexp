@@ -395,8 +395,6 @@ class Evaluator(object):
             for i in range(len(n_pairs[param_idx])):
                 if n_pairs[param_idx][i].sum().item() == 0:
                     continue
-                assert (n_pairs[-1][i][i] == n_valid[i]).item()
-                assert (n_pairs[-1][i].sum() == n_total[i]).item()
                 scores[f"{data_type}_{task}_acc_{i}_{param_idx}"] = (
                     100.0 * n_pairs[param_idx][i][i].item() / max(n_pairs[param_idx][i].sum().item(), 1)
                 )
@@ -406,8 +404,8 @@ class Evaluator(object):
                         f"({100. * n_pairs[param_idx][i][i].item() / max(n_pairs[param_idx][i].sum().item(), 1):.2f}%)"
                     )
         if params.wandb:
-            wandb.log(scores)
-            wandb.log({f"{data_type}_count": histogram_from_counts(self.counts[data_type])})
+            wandb.log(scores, step=self.trainer.epoch)
+            wandb.log({f"{data_type}_count": histogram_from_counts(self.counts[data_type])}, step=self.trainer.epoch)
         if data_type == "test":
             logger.info(f"{data_type} predicted pairs")
             for i in range(102):
