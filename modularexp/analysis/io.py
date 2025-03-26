@@ -33,6 +33,8 @@ def main():
         env.rng = np.random.RandomState(seed)
     
     modules = build_modules(env, params)
+    for k, v in modules.items():
+        v.load_state_dict(checkpoint[k])
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     for key, module in modules.items():
         module.to(device)
