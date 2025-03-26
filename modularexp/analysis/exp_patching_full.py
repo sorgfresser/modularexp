@@ -261,7 +261,7 @@ def get_layer_context(x_tensor, lengths, modules, layer_idx):
 
 def main():
     tau = 0.1
-    n_samples = 50
+    n_samples = 1000
     max_len = 50
     checkpoint_path = "modularexp/checkpoints/checkpoint (2).pth"
     checkpoint = torch.load(checkpoint_path, map_location="cpu")
