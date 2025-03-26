@@ -305,9 +305,9 @@ if __name__ == '__main__':
                   "max_inverse": params.max_inverse, "max_uniform": params.max_uniform, "test_uniform_outcome": params.test_uniform_exp,
                   "mixture": params.mixture}
         if params.wandb_run:
-            wandb.init(id=params.wandb_run, resume="allow", config=config)
+            wandb.init(id=params.wandb_run, resume="allow", config=config, project="modularexp")
         else:
-            wandb.init(config=config)
+            wandb.init(config=config, project="modularexp")
 
     # run experiment
     main(params)
