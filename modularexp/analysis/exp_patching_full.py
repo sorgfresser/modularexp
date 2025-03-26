@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 import torch
 from argparse import Namespace
 import numpy as np
@@ -134,11 +135,11 @@ def check_hypothesis_numeric(eq, env, target_val):
     pred_tokens = [env.id2word[token] for token in eq["hyp"]]
     # Filter out EOS tokens.
     filtered = [tok for tok in pred_tokens if tok != "<eos>" and tok != env.id2word[env.eos_index]]
-    # Get the correct sign from the target tokens.
+    # Get the expected sign from the target tokens.
     target_tokens = env.output_encoder.encode(target_val)
     correct_sign = target_tokens[0]
+    # If the first token in the prediction is not a sign, force the correct sign.
     if not filtered or filtered[0] not in ['+', '-']:
-        # Force in the correct sign.
         if filtered:
             filtered[0] = correct_sign
         else:
@@ -260,8 +261,23 @@ def get_layer_context(x_tensor, lengths, modules, layer_idx):
 # ----------------------------
 
 def main():
+    # Check if evaluation results already exist.
+    if (os.path.exists("full_evals.json") and os.path.exists("circuit_evals.json")
+         and os.path.exists("final_circuit.json")):
+        with open("full_evals.json", "r") as f:
+            full_results = json.load(f)
+        with open("circuit_evals.json", "r") as f:
+            circuit_results = json.load(f)
+        with open("final_circuit.json", "r") as f:
+            final_circuit = json.load(f)
+        print("Loaded previous evaluation results:")
+        print("Full model accuracy (numerical equivalence): {:.2f}%".format(full_results["accuracy"] * 100))
+        print("Circuit accuracy (numerical equivalence): {:.2f}%".format(circuit_results["accuracy"] * 100))
+        print("Final circuit:", final_circuit)
+        return
+
     tau = 0.1
-    n_samples = 1000
+    n_samples = 50
     max_len = 50
     checkpoint_path = "modularexp/checkpoints/checkpoint (2).pth"
     checkpoint = torch.load(checkpoint_path, map_location="cpu")
@@ -283,6 +299,8 @@ def main():
     print(f"Generated {len(samples)} samples satisfying c > a**b.")
     full_acc, full_evals = evaluate_full_accuracy(samples, modules, env, device, max_len)
     print(f"\nFull model accuracy (numerical equivalence): {full_acc*100:.2f}%")
+    with open("full_evals.json", "w") as f:
+        json.dump({"accuracy": full_acc, "evaluations": full_evals}, f, indent=4)
     num_layers = len(modules["decoder"].layers)
     n_heads = modules["decoder"].layers[0].self_attention.n_heads
     kl_accum = {layer: {head: 0.0 for head in range(n_heads)} for layer in range(num_layers)}
@@ -333,6 +351,10 @@ def main():
     print("Final circuit saved to final_circuit.json")
     circuit_acc, circuit_evals = evaluate_circuit_accuracy(samples, modules, env, device, final_circuit, max_len)
     print(f"\nCircuit accuracy (numerical equivalence): {circuit_acc*100:.2f}%")
+    with open("circuit_evals.json", "w") as f:
+        json.dump({"accuracy": circuit_acc, "evaluations": circuit_evals}, f, indent=4)
+    with open("kl_matrix.json", "w") as f:
+        json.dump(avg_kl, f, indent=4)
     kl_matrix = np.zeros((num_layers, n_heads))
     for layer in range(num_layers):
         for head in range(n_heads):
