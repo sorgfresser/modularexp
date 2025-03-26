@@ -5,62 +5,84 @@ import numpy as np
 from modularexp.envs import build_env
 from modularexp.model import build_modules
 
+def fast_exp(b, e, m):
+    r = 1
+    if e & 1:
+        r = b % m 
+    while e:
+        e >>= 1
+        b = (b * b) % m
+        if e & 1:
+            r = (r * b) % m
+    return r
+
+def idx_to_infix(env, idx, input=True):
+    prefix = [env.id2word[wid] for wid in idx]
+    return env.input_to_infix(prefix) if input else env.output_to_infix(prefix)
+
 def main():
-    # Path 
-    checkpoint_path = "./modularexp/checkpoints/checkpoint.pth"
-    
+    checkpoint_path = "modularexp/checkpoints/checkpoint.pth"
     checkpoint = torch.load(checkpoint_path, map_location="cpu")
     params = Namespace(**checkpoint["params"])
-    
     if isinstance(params.tasks, list):
-        params.tasks = ','.join(params.tasks)
+        params.tasks = ",".join(params.tasks)
     
-    # Build the environment
     env = build_env(params)
-    # Initialize the RNG if needed (some parts of the code expect env.rng)
     if not hasattr(env, "rng"):
         seed = params.env_base_seed if hasattr(params, "env_base_seed") else 42
         env.rng = np.random.RandomState(seed)
     
-    # Build model modules
     modules = build_modules(env, params)
-    
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     for key, module in modules.items():
         module.to(device)
         module.eval()
     
-    manual_input = [2, 3, 5]  # base=2, exponent=3, modulus=5
+    # Manual input
+    a, b, c = 2, 3, 7
+    manual_inp = (a, b, c)
+    manual_out = fast_exp(a, b, c)
+    print("Manually generated expression (input, solution):")
+    print(manual_inp + (manual_out,))
     
-    x = env.input_encoder.encode(manual_input)
-    
-    print("Manually set input tokens:")
+    x = env.input_encoder.encode(manual_inp)
+    y = env.output_encoder.encode(manual_out)
+    print("\nEncoded input tokens:")
     print(x)
+    print("\nEncoded output tokens (target):")
+    print(y)
     
-    # If the tokens are strings, convert them to indices using env.word2id.
     if isinstance(x[0], str):
-        x_indices = [env.word2id[token] for token in x]
+        try:
+            x_indices = [env.word2id[token] for token in x]
+        except KeyError as e:
+            print(f"Token not found in vocabulary: {e}")
+            return
     else:
         x_indices = x
-
+    print("\nInput indices:")
+    print(x_indices)
+    
+    # The model expects (sequence_length, batch_size); here batch_size=1
     x_tensor = torch.tensor(x_indices, dtype=torch.long, device=device).unsqueeze(1)
     lengths = torch.tensor([len(x_indices)], dtype=torch.long, device=device)
     
-    # Forward pass through the encoder and then use the decoder's generate method
     with torch.no_grad():
         encoded = modules["encoder"]("fwd", x=x_tensor, lengths=lengths, causal=False)
         encoded_for_decoding = encoded.transpose(0, 1)
-
         generated, gen_lengths = modules["decoder"].generate(
-            encoded_for_decoding, lengths, max_len=50
+            encoded_for_decoding, lengths, max_len=50, sample_temperature=0.7
         )
+        # generated = generated[1:]
     
     print("\nGenerated output tensor (token indices):")
     print(generated)
     
-    output_tokens = [env.id2word[idx.item()] for idx in generated[:, 0]]
-    print("\nGenerated output tokens:")
-    print(output_tokens)
-    
+    # Assume batch size is 1; get the sequence as a list
+    generated_indices = generated[:, 0].tolist()
+    decoded_expression = idx_to_infix(env, generated_indices, input=False)
+    print("\nDecoded output expression (evaluator style):")
+    print(decoded_expression)
+
 if __name__ == '__main__':
     main()
