@@ -41,7 +41,7 @@ def main():
         module.eval()
     
     # Manual input
-    a, b, c = 2, 3, 7
+    a, b, c = 200, 30, 7
     manual_inp = (a, b, c)
     manual_out = fast_exp(a, b, c)
     print("Manually generated expression (input, solution):")
@@ -56,7 +56,7 @@ def main():
     
     if isinstance(x[0], str):
         try:
-            x_indices = [env.word2id[token] for token in x]
+            x_indices = [env.word2id[token] for token in x] + [env.eos_index]
         except KeyError as e:
             print(f"Token not found in vocabulary: {e}")
             return

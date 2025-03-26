@@ -1,0 +1,1602 @@
+[
+    {
+        "base_input": [
+            24,
+            2,
+            584
+        ],
+        "cf_input": [
+            24,
+            2,
+            585
+        ],
+        "manual_output": 576,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 22.630186080932617
+    },
+    {
+        "base_input": [
+            42,
+            10,
+            17080198121677847
+        ],
+        "cf_input": [
+            42,
+            10,
+            17080198121677848
+        ],
+        "manual_output": 17080198121677824,
+        "model_output": "<eos>+13<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 26.85517120361328
+    },
+    {
+        "base_input": [
+            13,
+            9,
+            10604499380
+        ],
+        "cf_input": [
+            13,
+            9,
+            10604499381
+        ],
+        "manual_output": 10604499373,
+        "model_output": "<eos>+9<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 12.992682456970215
+    },
+    {
+        "base_input": [
+            15,
+            6,
+            11390625
+        ],
+        "cf_input": [
+            15,
+            6,
+            11390626
+        ],
+        "manual_output": 0,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 11.967244148254395
+    },
+    {
+        "base_input": [
+            21,
+            5,
+            4084129
+        ],
+        "cf_input": [
+            21,
+            5,
+            4084130
+        ],
+        "manual_output": 4084101,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 17.62858009338379
+    },
+    {
+        "base_input": [
+            47,
+            5,
+            229345020
+        ],
+        "cf_input": [
+            47,
+            5,
+            229345021
+        ],
+        "manual_output": 229345007,
+        "model_output": "<eos>+7<eos>",
+        "patched_model_output": "<eos>+7<eos>",
+        "kl_divergence": 18.505733489990234
+    },
+    {
+        "base_input": [
+            23,
+            4,
+            279866
+        ],
+        "cf_input": [
+            23,
+            4,
+            279867
+        ],
+        "manual_output": 279841,
+        "model_output": "<eos>+31<eos>",
+        "patched_model_output": "<eos>+23<eos>",
+        "kl_divergence": 9.242831230163574
+    },
+    {
+        "base_input": [
+            21,
+            4,
+            194504
+        ],
+        "cf_input": [
+            21,
+            4,
+            194505
+        ],
+        "manual_output": 194481,
+        "model_output": "<eos>+21<eos>",
+        "patched_model_output": "<eos>+21<eos>",
+        "kl_divergence": 20.249778747558594
+    },
+    {
+        "base_input": [
+            36,
+            3,
+            46667
+        ],
+        "cf_input": [
+            36,
+            3,
+            46668
+        ],
+        "manual_output": 46656,
+        "model_output": "<eos>+4<eos>",
+        "patched_model_output": "<eos>+17<eos>",
+        "kl_divergence": 10.794425010681152
+    },
+    {
+        "base_input": [
+            41,
+            7,
+            194754273902
+        ],
+        "cf_input": [
+            41,
+            7,
+            194754273903
+        ],
+        "manual_output": 194754273881,
+        "model_output": "<eos>+15<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 13.623335838317871
+    },
+    {
+        "base_input": [
+            10,
+            9,
+            1000000049
+        ],
+        "cf_input": [
+            10,
+            9,
+            1000000050
+        ],
+        "manual_output": 1000000000,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 27.093029022216797
+    },
+    {
+        "base_input": [
+            41,
+            10,
+            13422659310152426
+        ],
+        "cf_input": [
+            41,
+            10,
+            13422659310152427
+        ],
+        "manual_output": 13422659310152401,
+        "model_output": "<eos>+3<eos>",
+        "patched_model_output": "<eos>+4<eos>",
+        "kl_divergence": 11.420792579650879
+    },
+    {
+        "base_input": [
+            9,
+            2,
+            127
+        ],
+        "cf_input": [
+            9,
+            2,
+            128
+        ],
+        "manual_output": 81,
+        "model_output": "<eos>+24<eos>",
+        "patched_model_output": "<eos>+24<eos>",
+        "kl_divergence": 12.43217945098877
+    },
+    {
+        "base_input": [
+            5,
+            5,
+            3156
+        ],
+        "cf_input": [
+            5,
+            5,
+            3157
+        ],
+        "manual_output": 3125,
+        "model_output": "<eos>+5<eos>",
+        "patched_model_output": "<eos>+5<eos>",
+        "kl_divergence": 17.907928466796875
+    },
+    {
+        "base_input": [
+            21,
+            6,
+            85766149
+        ],
+        "cf_input": [
+            21,
+            6,
+            85766150
+        ],
+        "manual_output": 85766121,
+        "model_output": "<eos>+36<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 9.394256591796875
+    },
+    {
+        "base_input": [
+            4,
+            3,
+            72
+        ],
+        "cf_input": [
+            4,
+            3,
+            73
+        ],
+        "manual_output": 64,
+        "model_output": "<eos>+64<eos>",
+        "patched_model_output": "<eos>+64<eos>",
+        "kl_divergence": 13.902300834655762
+    },
+    {
+        "base_input": [
+            21,
+            3,
+            9302
+        ],
+        "cf_input": [
+            21,
+            3,
+            9303
+        ],
+        "manual_output": 9261,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 14.834131240844727
+    },
+    {
+        "base_input": [
+            35,
+            10,
+            2758547353515671
+        ],
+        "cf_input": [
+            35,
+            10,
+            2758547353515672
+        ],
+        "manual_output": 2758547353515625,
+        "model_output": "<eos>+3<eos>",
+        "patched_model_output": "<eos>+9<eos>",
+        "kl_divergence": 19.439090728759766
+    },
+    {
+        "base_input": [
+            19,
+            3,
+            6908
+        ],
+        "cf_input": [
+            19,
+            3,
+            6909
+        ],
+        "manual_output": 6859,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 17.314477920532227
+    },
+    {
+        "base_input": [
+            30,
+            10,
+            590490000000002
+        ],
+        "cf_input": [
+            30,
+            10,
+            590490000000003
+        ],
+        "manual_output": 590490000000000,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 31.074298858642578
+    },
+    {
+        "base_input": [
+            20,
+            2,
+            406
+        ],
+        "cf_input": [
+            20,
+            2,
+            407
+        ],
+        "manual_output": 400,
+        "model_output": "<eos>+8<eos>",
+        "patched_model_output": "<eos>+8<eos>",
+        "kl_divergence": 22.191967010498047
+    },
+    {
+        "base_input": [
+            40,
+            6,
+            4096000025
+        ],
+        "cf_input": [
+            40,
+            6,
+            4096000026
+        ],
+        "manual_output": 4096000000,
+        "model_output": "<eos>+16<eos>",
+        "patched_model_output": "<eos>+16<eos>",
+        "kl_divergence": 32.01018524169922
+    },
+    {
+        "base_input": [
+            43,
+            8,
+            11688200277602
+        ],
+        "cf_input": [
+            43,
+            8,
+            11688200277603
+        ],
+        "manual_output": 11688200277601,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 14.83674144744873
+    },
+    {
+        "base_input": [
+            33,
+            7,
+            42618443008
+        ],
+        "cf_input": [
+            33,
+            7,
+            42618443009
+        ],
+        "manual_output": 42618442977,
+        "model_output": "<eos>+15<eos>",
+        "patched_model_output": "<eos>+9<eos>",
+        "kl_divergence": 23.294815063476562
+    },
+    {
+        "base_input": [
+            49,
+            3,
+            117658
+        ],
+        "cf_input": [
+            49,
+            3,
+            117659
+        ],
+        "manual_output": 117649,
+        "model_output": "<eos>+7<eos>",
+        "patched_model_output": "<eos>+7<eos>",
+        "kl_divergence": 15.340720176696777
+    },
+    {
+        "base_input": [
+            20,
+            8,
+            25600000046
+        ],
+        "cf_input": [
+            20,
+            8,
+            25600000047
+        ],
+        "manual_output": 25600000000,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 30.971973419189453
+    },
+    {
+        "base_input": [
+            48,
+            3,
+            110617
+        ],
+        "cf_input": [
+            48,
+            3,
+            110618
+        ],
+        "manual_output": 110592,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 14.02900218963623
+    },
+    {
+        "base_input": [
+            42,
+            3,
+            74118
+        ],
+        "cf_input": [
+            42,
+            3,
+            74119
+        ],
+        "manual_output": 74088,
+        "model_output": "<eos>+42<eos>",
+        "patched_model_output": "<eos>+22<eos>",
+        "kl_divergence": 11.696117401123047
+    },
+    {
+        "base_input": [
+            40,
+            8,
+            6553600000047
+        ],
+        "cf_input": [
+            40,
+            8,
+            6553600000048
+        ],
+        "manual_output": 6553600000000,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 21.69031524658203
+    },
+    {
+        "base_input": [
+            47,
+            7,
+            506623120490
+        ],
+        "cf_input": [
+            47,
+            7,
+            506623120491
+        ],
+        "manual_output": 506623120463,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 14.27441692352295
+    },
+    {
+        "base_input": [
+            42,
+            5,
+            130691272
+        ],
+        "cf_input": [
+            42,
+            5,
+            130691273
+        ],
+        "manual_output": 130691232,
+        "model_output": "<eos>+22<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 11.730737686157227
+    },
+    {
+        "base_input": [
+            44,
+            7,
+            319277809677
+        ],
+        "cf_input": [
+            44,
+            7,
+            319277809678
+        ],
+        "manual_output": 319277809664,
+        "model_output": "<eos>+13<eos>",
+        "patched_model_output": "<eos>+22<eos>",
+        "kl_divergence": 9.255002975463867
+    },
+    {
+        "base_input": [
+            38,
+            8,
+            4347792138530
+        ],
+        "cf_input": [
+            38,
+            8,
+            4347792138531
+        ],
+        "manual_output": 4347792138496,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 19.770559310913086
+    },
+    {
+        "base_input": [
+            14,
+            3,
+            2759
+        ],
+        "cf_input": [
+            14,
+            3,
+            2760
+        ],
+        "manual_output": 2744,
+        "model_output": "<eos>+2<eos>",
+        "patched_model_output": "<eos>+4<eos>",
+        "kl_divergence": 13.805708885192871
+    },
+    {
+        "base_input": [
+            30,
+            4,
+            810018
+        ],
+        "cf_input": [
+            30,
+            4,
+            810019
+        ],
+        "manual_output": 810000,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 20.467119216918945
+    },
+    {
+        "base_input": [
+            23,
+            8,
+            78310985303
+        ],
+        "cf_input": [
+            23,
+            8,
+            78310985304
+        ],
+        "manual_output": 78310985281,
+        "model_output": "<eos>+16<eos>",
+        "patched_model_output": "<eos>+16<eos>",
+        "kl_divergence": 11.316821098327637
+    },
+    {
+        "base_input": [
+            34,
+            9,
+            60716992766475
+        ],
+        "cf_input": [
+            34,
+            9,
+            60716992766476
+        ],
+        "manual_output": 60716992766464,
+        "model_output": "<eos>+16<eos>",
+        "patched_model_output": "<eos>+16<eos>",
+        "kl_divergence": 20.369905471801758
+    },
+    {
+        "base_input": [
+            4,
+            4,
+            302
+        ],
+        "cf_input": [
+            4,
+            4,
+            303
+        ],
+        "manual_output": 256,
+        "model_output": "<eos>+24<eos>",
+        "patched_model_output": "<eos>+24<eos>",
+        "kl_divergence": 19.251264572143555
+    },
+    {
+        "base_input": [
+            23,
+            4,
+            279874
+        ],
+        "cf_input": [
+            23,
+            4,
+            279875
+        ],
+        "manual_output": 279841,
+        "model_output": "<eos>+17<eos>",
+        "patched_model_output": "<eos>+31<eos>",
+        "kl_divergence": 8.239969253540039
+    },
+    {
+        "base_input": [
+            39,
+            5,
+            90224223
+        ],
+        "cf_input": [
+            39,
+            5,
+            90224224
+        ],
+        "manual_output": 90224199,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 9.779844284057617
+    },
+    {
+        "base_input": [
+            26,
+            7,
+            8031810208
+        ],
+        "cf_input": [
+            26,
+            7,
+            8031810209
+        ],
+        "manual_output": 8031810176,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+26<eos>",
+        "kl_divergence": 18.171415328979492
+    },
+    {
+        "base_input": [
+            43,
+            2,
+            1889
+        ],
+        "cf_input": [
+            43,
+            2,
+            1890
+        ],
+        "manual_output": 1849,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 15.722975730895996
+    },
+    {
+        "base_input": [
+            41,
+            2,
+            1725
+        ],
+        "cf_input": [
+            41,
+            2,
+            1726
+        ],
+        "manual_output": 1681,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 16.516021728515625
+    },
+    {
+        "base_input": [
+            7,
+            4,
+            2417
+        ],
+        "cf_input": [
+            7,
+            4,
+            2418
+        ],
+        "manual_output": 2401,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 19.887344360351562
+    },
+    {
+        "base_input": [
+            32,
+            5,
+            33554448
+        ],
+        "cf_input": [
+            32,
+            5,
+            33554449
+        ],
+        "manual_output": 33554432,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 13.541462898254395
+    },
+    {
+        "base_input": [
+            22,
+            7,
+            2494357897
+        ],
+        "cf_input": [
+            22,
+            7,
+            2494357898
+        ],
+        "manual_output": 2494357888,
+        "model_output": "<eos>+8<eos>",
+        "patched_model_output": "<eos>+8<eos>",
+        "kl_divergence": 13.84658432006836
+    },
+    {
+        "base_input": [
+            38,
+            8,
+            4347792138521
+        ],
+        "cf_input": [
+            38,
+            8,
+            4347792138522
+        ],
+        "manual_output": 4347792138496,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 19.637094497680664
+    },
+    {
+        "base_input": [
+            31,
+            8,
+            852891037479
+        ],
+        "cf_input": [
+            31,
+            8,
+            852891037480
+        ],
+        "manual_output": 852891037441,
+        "model_output": "<eos>+16<eos>",
+        "patched_model_output": "<eos>+7<eos>",
+        "kl_divergence": 14.007278442382812
+    },
+    {
+        "base_input": [
+            13,
+            3,
+            2240
+        ],
+        "cf_input": [
+            13,
+            3,
+            2241
+        ],
+        "manual_output": 2197,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 25.04541778564453
+    },
+    {
+        "base_input": [
+            36,
+            7,
+            78364164104
+        ],
+        "cf_input": [
+            36,
+            7,
+            78364164105
+        ],
+        "manual_output": 78364164096,
+        "model_output": "<eos>+8<eos>",
+        "patched_model_output": "<eos>+28<eos>",
+        "kl_divergence": 19.53714942932129
+    },
+    {
+        "base_input": [
+            10,
+            9,
+            1000000027
+        ],
+        "cf_input": [
+            10,
+            9,
+            1000000028
+        ],
+        "manual_output": 1000000000,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 28.158987045288086
+    },
+    {
+        "base_input": [
+            48,
+            7,
+            587068342313
+        ],
+        "cf_input": [
+            48,
+            7,
+            587068342314
+        ],
+        "manual_output": 587068342272,
+        "model_output": "<eos>+12<eos>",
+        "patched_model_output": "<eos>+12<eos>",
+        "kl_divergence": 14.137676239013672
+    },
+    {
+        "base_input": [
+            5,
+            2,
+            31
+        ],
+        "cf_input": [
+            5,
+            2,
+            32
+        ],
+        "manual_output": 25,
+        "model_output": "<eos>+25<eos>",
+        "patched_model_output": "<eos>+25<eos>",
+        "kl_divergence": 10.948748588562012
+    },
+    {
+        "base_input": [
+            23,
+            5,
+            6436345
+        ],
+        "cf_input": [
+            23,
+            5,
+            6436346
+        ],
+        "manual_output": 6436343,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 13.179176330566406
+    },
+    {
+        "base_input": [
+            16,
+            5,
+            1048613
+        ],
+        "cf_input": [
+            16,
+            5,
+            1048614
+        ],
+        "manual_output": 1048576,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+13<eos>",
+        "kl_divergence": 11.600992202758789
+    },
+    {
+        "base_input": [
+            27,
+            2,
+            763
+        ],
+        "cf_input": [
+            27,
+            2,
+            764
+        ],
+        "manual_output": 729,
+        "model_output": "<eos>+33<eos>",
+        "patched_model_output": "<eos>+33<eos>",
+        "kl_divergence": 9.849605560302734
+    },
+    {
+        "base_input": [
+            21,
+            9,
+            794280046612
+        ],
+        "cf_input": [
+            21,
+            9,
+            794280046613
+        ],
+        "manual_output": 794280046581,
+        "model_output": "<eos>+21<eos>",
+        "patched_model_output": "<eos>+21<eos>",
+        "kl_divergence": 16.988859176635742
+    },
+    {
+        "base_input": [
+            33,
+            9,
+            46411484401955
+        ],
+        "cf_input": [
+            33,
+            9,
+            46411484401956
+        ],
+        "manual_output": 46411484401953,
+        "model_output": "<eos>+41<eos>",
+        "patched_model_output": "<eos>+31<eos>",
+        "kl_divergence": 13.760281562805176
+    },
+    {
+        "base_input": [
+            17,
+            4,
+            83536
+        ],
+        "cf_input": [
+            17,
+            4,
+            83537
+        ],
+        "manual_output": 83521,
+        "model_output": "<eos>+49<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 9.279458999633789
+    },
+    {
+        "base_input": [
+            31,
+            4,
+            923529
+        ],
+        "cf_input": [
+            31,
+            4,
+            923530
+        ],
+        "manual_output": 923521,
+        "model_output": "<eos>+42<eos>",
+        "patched_model_output": "<eos>+13<eos>",
+        "kl_divergence": 9.013184547424316
+    },
+    {
+        "base_input": [
+            4,
+            9,
+            262179
+        ],
+        "cf_input": [
+            4,
+            9,
+            262180
+        ],
+        "manual_output": 262144,
+        "model_output": "<eos>+27<eos>",
+        "patched_model_output": "<eos>+15<eos>",
+        "kl_divergence": 7.350526809692383
+    },
+    {
+        "base_input": [
+            33,
+            9,
+            46411484401970
+        ],
+        "cf_input": [
+            33,
+            9,
+            46411484401971
+        ],
+        "manual_output": 46411484401953,
+        "model_output": "<eos>+33<eos>",
+        "patched_model_output": "<eos>+8<eos>",
+        "kl_divergence": 12.895217895507812
+    },
+    {
+        "base_input": [
+            33,
+            10,
+            1531578985264476
+        ],
+        "cf_input": [
+            33,
+            10,
+            1531578985264477
+        ],
+        "manual_output": 1531578985264449,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 17.467082977294922
+    },
+    {
+        "base_input": [
+            8,
+            7,
+            2097171
+        ],
+        "cf_input": [
+            8,
+            7,
+            2097172
+        ],
+        "manual_output": 2097152,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 15.023069381713867
+    },
+    {
+        "base_input": [
+            15,
+            6,
+            11390661
+        ],
+        "cf_input": [
+            15,
+            6,
+            11390662
+        ],
+        "manual_output": 11390625,
+        "model_output": "<eos>+32<eos>",
+        "patched_model_output": "<eos>+3<eos>",
+        "kl_divergence": 9.949164390563965
+    },
+    {
+        "base_input": [
+            39,
+            5,
+            90224199
+        ],
+        "cf_input": [
+            39,
+            5,
+            90224200
+        ],
+        "manual_output": 0,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+2<eos>",
+        "kl_divergence": 10.336954116821289
+    },
+    {
+        "base_input": [
+            13,
+            2,
+            204
+        ],
+        "cf_input": [
+            13,
+            2,
+            205
+        ],
+        "manual_output": 169,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 24.335369110107422
+    },
+    {
+        "base_input": [
+            29,
+            5,
+            20511182
+        ],
+        "cf_input": [
+            29,
+            5,
+            20511183
+        ],
+        "manual_output": 20511149,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 10.915511131286621
+    },
+    {
+        "base_input": [
+            10,
+            5,
+            100010
+        ],
+        "cf_input": [
+            10,
+            5,
+            100011
+        ],
+        "manual_output": 100000,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 23.69163703918457
+    },
+    {
+        "base_input": [
+            3,
+            3,
+            74
+        ],
+        "cf_input": [
+            3,
+            3,
+            75
+        ],
+        "manual_output": 27,
+        "model_output": "<eos>+27<eos>",
+        "patched_model_output": "<eos>+27<eos>",
+        "kl_divergence": 14.339574813842773
+    },
+    {
+        "base_input": [
+            42,
+            6,
+            5489031785
+        ],
+        "cf_input": [
+            42,
+            6,
+            5489031786
+        ],
+        "manual_output": 5489031744,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+16<eos>",
+        "kl_divergence": 16.67737579345703
+    },
+    {
+        "base_input": [
+            4,
+            4,
+            268
+        ],
+        "cf_input": [
+            4,
+            4,
+            269
+        ],
+        "manual_output": 256,
+        "model_output": "<eos>+28<eos>",
+        "patched_model_output": "<eos>+28<eos>",
+        "kl_divergence": 18.31285285949707
+    },
+    {
+        "base_input": [
+            12,
+            6,
+            2986008
+        ],
+        "cf_input": [
+            12,
+            6,
+            2986009
+        ],
+        "manual_output": 2985984,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 18.51046371459961
+    },
+    {
+        "base_input": [
+            42,
+            2,
+            1795
+        ],
+        "cf_input": [
+            42,
+            2,
+            1796
+        ],
+        "manual_output": 1764,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 23.029727935791016
+    },
+    {
+        "base_input": [
+            4,
+            3,
+            66
+        ],
+        "cf_input": [
+            4,
+            3,
+            67
+        ],
+        "manual_output": 64,
+        "model_output": "<eos>+64<eos>",
+        "patched_model_output": "<eos>+64<eos>",
+        "kl_divergence": 13.852958679199219
+    },
+    {
+        "base_input": [
+            34,
+            8,
+            1785793904935
+        ],
+        "cf_input": [
+            34,
+            8,
+            1785793904936
+        ],
+        "manual_output": 1785793904896,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 17.186832427978516
+    },
+    {
+        "base_input": [
+            6,
+            9,
+            10077707
+        ],
+        "cf_input": [
+            6,
+            9,
+            10077708
+        ],
+        "manual_output": 10077696,
+        "model_output": "<eos>+22<eos>",
+        "patched_model_output": "<eos>+22<eos>",
+        "kl_divergence": 10.881124496459961
+    },
+    {
+        "base_input": [
+            28,
+            3,
+            21981
+        ],
+        "cf_input": [
+            28,
+            3,
+            21982
+        ],
+        "manual_output": 21952,
+        "model_output": "<eos>+7<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 17.161144256591797
+    },
+    {
+        "base_input": [
+            8,
+            9,
+            134217765
+        ],
+        "cf_input": [
+            8,
+            9,
+            134217766
+        ],
+        "manual_output": 134217728,
+        "model_output": "<eos>+28<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 11.916769027709961
+    },
+    {
+        "base_input": [
+            47,
+            7,
+            506623120512
+        ],
+        "cf_input": [
+            47,
+            7,
+            506623120513
+        ],
+        "manual_output": 506623120463,
+        "model_output": "<eos>+13<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 12.96671199798584
+    },
+    {
+        "base_input": [
+            4,
+            10,
+            1048577
+        ],
+        "cf_input": [
+            4,
+            10,
+            1048578
+        ],
+        "manual_output": 1048576,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 12.39307975769043
+    },
+    {
+        "base_input": [
+            14,
+            6,
+            7529545
+        ],
+        "cf_input": [
+            14,
+            6,
+            7529546
+        ],
+        "manual_output": 7529536,
+        "model_output": "<eos>+48<eos>",
+        "patched_model_output": "<eos>+34<eos>",
+        "kl_divergence": 10.073918342590332
+    },
+    {
+        "base_input": [
+            21,
+            6,
+            85766143
+        ],
+        "cf_input": [
+            21,
+            6,
+            85766144
+        ],
+        "manual_output": 85766121,
+        "model_output": "<eos>+41<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 10.060909271240234
+    },
+    {
+        "base_input": [
+            9,
+            9,
+            387420507
+        ],
+        "cf_input": [
+            9,
+            9,
+            387420508
+        ],
+        "manual_output": 387420489,
+        "model_output": "<eos>+9<eos>",
+        "patched_model_output": "<eos>+9<eos>",
+        "kl_divergence": 15.776790618896484
+    },
+    {
+        "base_input": [
+            34,
+            9,
+            60716992766497
+        ],
+        "cf_input": [
+            34,
+            9,
+            60716992766498
+        ],
+        "manual_output": 60716992766464,
+        "model_output": "<eos>+25<eos>",
+        "patched_model_output": "<eos>+25<eos>",
+        "kl_divergence": 20.259309768676758
+    },
+    {
+        "base_input": [
+            30,
+            8,
+            656100000016
+        ],
+        "cf_input": [
+            30,
+            8,
+            656100000017
+        ],
+        "manual_output": 656100000000,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 25.17947006225586
+    },
+    {
+        "base_input": [
+            39,
+            6,
+            3518743802
+        ],
+        "cf_input": [
+            39,
+            6,
+            3518743803
+        ],
+        "manual_output": 3518743761,
+        "model_output": "<eos>+15<eos>",
+        "patched_model_output": "<eos>+15<eos>",
+        "kl_divergence": 10.858169555664062
+    },
+    {
+        "base_input": [
+            42,
+            6,
+            5489031785
+        ],
+        "cf_input": [
+            42,
+            6,
+            5489031786
+        ],
+        "manual_output": 5489031744,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+4<eos>",
+        "kl_divergence": 16.440170288085938
+    },
+    {
+        "base_input": [
+            30,
+            7,
+            21870000050
+        ],
+        "cf_input": [
+            30,
+            7,
+            21870000051
+        ],
+        "manual_output": 21870000000,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 27.483644485473633
+    },
+    {
+        "base_input": [
+            44,
+            5,
+            164916270
+        ],
+        "cf_input": [
+            44,
+            5,
+            164916271
+        ],
+        "manual_output": 164916224,
+        "model_output": "<eos>+10<eos>",
+        "patched_model_output": "<eos>+10<eos>",
+        "kl_divergence": 17.405988693237305
+    },
+    {
+        "base_input": [
+            21,
+            6,
+            85766162
+        ],
+        "cf_input": [
+            21,
+            6,
+            85766163
+        ],
+        "manual_output": 85766121,
+        "model_output": "<eos>+9<eos>",
+        "patched_model_output": "<eos>+9<eos>",
+        "kl_divergence": 12.755249977111816
+    },
+    {
+        "base_input": [
+            2,
+            7,
+            143
+        ],
+        "cf_input": [
+            2,
+            7,
+            144
+        ],
+        "manual_output": 128,
+        "model_output": "<eos>+51<eos>",
+        "patched_model_output": "<eos>+51<eos>",
+        "kl_divergence": 13.613871574401855
+    },
+    {
+        "base_input": [
+            12,
+            5,
+            248833
+        ],
+        "cf_input": [
+            12,
+            5,
+            248834
+        ],
+        "manual_output": 248832,
+        "model_output": "<eos>+12<eos>",
+        "patched_model_output": "<eos>+12<eos>",
+        "kl_divergence": 7.2686543464660645
+    },
+    {
+        "base_input": [
+            20,
+            3,
+            8005
+        ],
+        "cf_input": [
+            20,
+            3,
+            8006
+        ],
+        "manual_output": 8000,
+        "model_output": "<eos>+0<eos>",
+        "patched_model_output": "<eos>+0<eos>",
+        "kl_divergence": 20.20024299621582
+    },
+    {
+        "base_input": [
+            43,
+            5,
+            147008464
+        ],
+        "cf_input": [
+            43,
+            5,
+            147008465
+        ],
+        "manual_output": 147008443,
+        "model_output": "<eos>+3<eos>",
+        "patched_model_output": "<eos>+11<eos>",
+        "kl_divergence": 15.769954681396484
+    },
+    {
+        "base_input": [
+            14,
+            10,
+            289254655001
+        ],
+        "cf_input": [
+            14,
+            10,
+            289254655002
+        ],
+        "manual_output": 289254654976,
+        "model_output": "<eos>+16<eos>",
+        "patched_model_output": "<eos>+14<eos>",
+        "kl_divergence": 10.763586044311523
+    },
+    {
+        "base_input": [
+            43,
+            10,
+            21611482313284262
+        ],
+        "cf_input": [
+            43,
+            10,
+            21611482313284263
+        ],
+        "manual_output": 21611482313284249,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 15.545293807983398
+    },
+    {
+        "base_input": [
+            48,
+            10,
+            64925062108545032
+        ],
+        "cf_input": [
+            48,
+            10,
+            64925062108545033
+        ],
+        "manual_output": 64925062108545024,
+        "model_output": "<eos>+1<eos>",
+        "patched_model_output": "<eos>+1<eos>",
+        "kl_divergence": 13.00288200378418
+    },
+    {
+        "base_input": [
+            27,
+            7,
+            10460353203
+        ],
+        "cf_input": [
+            27,
+            7,
+            10460353204
+        ],
+        "manual_output": 0,
+        "model_output": "<eos>+3<eos>",
+        "patched_model_output": "<eos>+3<eos>",
+        "kl_divergence": 14.982220649719238
+    },
+    {
+        "base_input": [
+            3,
+            6,
+            760
+        ],
+        "cf_input": [
+            3,
+            6,
+            761
+        ],
+        "manual_output": 729,
+        "model_output": "<eos>+9<eos>",
+        "patched_model_output": "<eos>+9<eos>",
+        "kl_divergence": 20.186262130737305
+    }
+]
